@@ -1561,6 +1561,35 @@ That saved a wretch like me"></textarea>
     });
   }
 
+  // Clean up a YouTube video title into a song title
+  function cleanSongTitle(raw) {
+    let t = raw;
+    // Remove common YouTube suffixes/tags (case-insensitive)
+    const junk = [
+      /\s*[\(\[]\s*(official\s*)?(music\s*)?(lyric\s*)?(live\s*)?(acoustic\s*)?(video|audio|visualizer|clip|mv|lyrics?|hd|4k|remastered)\s*[\)\]]/gi,
+      /\s*[\(\[]\s*(feat\.?|ft\.?)\s*[^\)\]]+[\)\]]/gi,
+      /\s*[\(\[]\s*(with\s+lyrics?|con\s+letras?|sub(titled|s)?)\s*[\)\]]/gi,
+      /\s*-\s*(official\s*)?(music\s*)?(lyric\s*)?(live\s*)?(acoustic\s*)?(video|audio|visualizer|lyrics?)\s*$/gi,
+      /\s*\|\s*(official\s*)?(music\s*)?(lyric\s*)?(video|audio|lyrics?)\s*$/gi,
+      /\s*#\w+/g, // hashtags
+    ];
+    for (const re of junk) t = t.replace(re, '');
+
+    // If title has " - Artist" or "Artist - Song", try to extract just the song
+    // Common format: "Artist - Song Title"
+    const dashParts = t.split(/\s+[-–—]\s+/);
+    if (dashParts.length === 2) {
+      // Use the longer part as the song title (artist names are usually shorter)
+      // But if it looks like "Song - Artist", the song is first
+      t = dashParts[1].length >= dashParts[0].length ? dashParts[1] : dashParts[0];
+    } else if (dashParts.length > 2) {
+      // Multiple dashes — just take everything after the first dash
+      t = dashParts.slice(1).join(' - ');
+    }
+
+    return t.trim().replace(/\s+/g, ' ');
+  }
+
   function loadVideo() {
     const url = els.youtubeUrl.value.trim();
     if (!url) return;
@@ -1583,6 +1612,19 @@ That saved a wretch like me"></textarea>
         const iframe = els.videoContainer.querySelector('iframe');
         if (iframe && iframe.src.includes(videoId)) ytPlayer = new YT.Player(iframe);
       });
+    }
+
+    // Fetch video title via oEmbed (free, no API key, CORS-friendly)
+    if (!els.songTitle.value) {
+      fetch('https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=' + videoId + '&format=json')
+        .then(r => r.ok ? r.json() : null)
+        .then(data => {
+          if (data && data.title && !els.songTitle.value) {
+            els.songTitle.value = cleanSongTitle(data.title);
+            renderOutput();
+          }
+        })
+        .catch(() => {}); // silently fail — not critical
     }
   }
 
