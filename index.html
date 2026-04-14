@@ -817,7 +817,7 @@
     /* ── PRINT ── */
     @media print {
       body { background: #fff !important; color: #000 !important; }
-      .topbar, .transpose-strip, .panel-side, .action-bar, .editor-tabs, .toast, .pdf-topbar, .fullscreen-overlay { display: none !important; }
+      .topbar, .transpose-strip, .panel-side, .action-bar, .editor-tabs, .toast, .pdf-topbar, .fullscreen-overlay, .step-bar, .paste-helper-bar, .ready-label { display: none !important; }
       .workspace { display: block !important; overflow: visible !important; }
       .panel-main { width: 100% !important; }
       .editor-pane { overflow: visible !important; }
@@ -827,6 +827,168 @@
       .output-view { padding: 0; font-size: 11pt; line-height: 1.9; color: #000; }
       .output-view .chord { color: #000 !important; }
       .output-view .section { color: #444 !important; }
+    }
+
+    /* ── STEP INDICATOR ── */
+    .step-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 8px 20px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      transition: background var(--transition), border-color var(--transition);
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.74rem;
+      font-weight: 500;
+      color: var(--text-tertiary);
+      transition: all var(--transition);
+      opacity: 0.55;
+    }
+
+    .step.active {
+      color: var(--text);
+      opacity: 1;
+    }
+
+    .step.done {
+      color: var(--text-secondary);
+      opacity: 0.85;
+    }
+
+    .step-num {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--border);
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 700;
+      transition: all var(--transition);
+      flex-shrink: 0;
+    }
+
+    .step.active .step-num {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    .step.done .step-num {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .step.done .step-num::before {
+      content: '✓';
+      font-size: 0.7rem;
+    }
+
+    .step.done .step-num span { display: none; }
+
+    .step-divider {
+      width: 18px;
+      height: 1px;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+
+    /* ── PASTE HELPER ── */
+    .paste-helper-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface-alt);
+      flex-shrink: 0;
+      transition: background var(--transition), border-color var(--transition);
+    }
+
+    .paste-helper-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 11px;
+      border: 1px solid var(--primary);
+      border-radius: var(--radius-xs);
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.74rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: var(--font-sans);
+    }
+
+    .paste-helper-btn:hover { background: var(--primary); color: #fff; }
+    .paste-helper-btn:active { transform: scale(0.97); }
+
+    .paste-helper-msg {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      opacity: 0;
+      transform: translateY(-2px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      pointer-events: none;
+    }
+
+    .paste-helper-msg.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── GLOW ANIMATION (when video loads, draws attention to editor) ── */
+    @keyframes editorGlow {
+      0%   { box-shadow: inset 0 0 0 0 transparent; }
+      30%  { box-shadow: inset 0 0 0 3px var(--primary); }
+      100% { box-shadow: inset 0 0 0 0 transparent; }
+    }
+
+    .editor-pane.glow { animation: editorGlow 1.4s cubic-bezier(0.25, 0.1, 0.25, 1); }
+
+    /* ── READY LABEL ── */
+    .ready-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #16a34a;
+      background: rgba(22, 163, 74, 0.1);
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin: 12px 16px 0 24px;
+      letter-spacing: 0.01em;
+    }
+
+    [data-theme="dark"] .ready-label {
+      color: #4ade80;
+      background: rgba(74, 222, 128, 0.12);
+    }
+
+    /* Smooth scroll globally */
+    html { scroll-behavior: smooth; }
+
+    /* Highlight YouTube input briefly on first load */
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 0 0 var(--primary-light); }
+      50%      { box-shadow: 0 0 0 4px var(--primary-light); }
+    }
+
+    .yt-url-input.hint {
+      animation: pulseGlow 1.6s ease-in-out 2;
+      border-color: var(--primary);
     }
 
     /* ── RESPONSIVE ── */
@@ -842,6 +1004,9 @@
       .transpose-strip { padding: 6px 14px; gap: 8px; }
       .fs-content { padding: 20px 5%; font-size: 0.92rem; }
       .capo-label, .nashville-toggle { display: none; }
+      .step-bar { gap: 8px; padding: 6px 12px; }
+      .step { font-size: 0.68rem; }
+      .step-divider { width: 10px; }
     }
 
     @media (max-width: 500px) {
@@ -918,6 +1083,15 @@
   <span class="pdf-notice hidden" id="pdfNotice">PDF charts are view-only</span>
 </div>
 
+<!-- ════ STEP INDICATOR ════ -->
+<div class="step-bar" id="stepBar">
+  <div class="step active" data-step="1"><span class="step-num"><span>1</span></span>Paste YouTube link</div>
+  <div class="step-divider"></div>
+  <div class="step" data-step="2"><span class="step-num"><span>2</span></span>Paste lyrics + chords</div>
+  <div class="step-divider"></div>
+  <div class="step" data-step="3"><span class="step-num"><span>3</span></span>Transpose & practice</div>
+</div>
+
 <!-- ════ WORKSPACE ════ -->
 <div class="workspace">
   <div class="panel panel-main">
@@ -927,22 +1101,30 @@
         <button class="editor-tab active" data-tab="edit">Edit</button>
         <button class="editor-tab" data-tab="preview">Preview</button>
       </div>
+      <div class="paste-helper-bar" id="pasteHelperBar">
+        <button class="paste-helper-btn" id="pasteHelperBtn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Paste lyrics here
+        </button>
+        <span class="paste-helper-msg" id="pasteHelperMsg">Copy lyrics from any site, then paste them here (Cmd / Ctrl + V)</span>
+      </div>
       <div class="editor-pane" id="editorPane">
-        <textarea class="lyrics-editor" id="lyricsInput" placeholder="Paste your lyrics and chords here...
+        <textarea class="lyrics-editor" id="lyricsInput" placeholder="[Verse 1]
+Paste your lyrics here...
 
-Tip: Load a YouTube link first — the song title fills automatically.
-Then set the correct key above before transposing.
-
-[Verse 1]
-G                        C
-Amazing grace how sweet the sound
-D                     G
-That saved a wretch like me"></textarea>
+G                            C
+Add chords above lines, or inline
+D                          G
+Transpose with the buttons above"></textarea>
       </div>
       <div class="editor-pane hidden" id="previewPane">
         <div id="printHeader" style="display:none;">
           <h2 id="printTitle"></h2>
           <p id="printKey"></p>
+        </div>
+        <div class="ready-label" id="readyLabel">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Ready for rehearsal
         </div>
         <div class="output-view" id="outputArea"></div>
       </div>
@@ -994,13 +1176,13 @@ That saved a wretch like me"></textarea>
         <span class="panel-label">YouTube Reference</span>
       </div>
       <div class="yt-input-row">
-        <input type="text" id="youtubeUrl" class="yt-url-input" placeholder="Paste YouTube URL...">
+        <input type="text" id="youtubeUrl" class="yt-url-input" placeholder="Paste a YouTube link to start">
         <button class="yt-load-btn" id="loadVideoBtn">Load</button>
       </div>
       <div class="yt-player-area" id="videoContainer">
         <div class="yt-placeholder" id="videoPlaceholder">
           <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          <div>Paste a YouTube link to auto-fill the song title</div>
+          <div>Paste a YouTube link to start</div>
         </div>
       </div>
       <div class="speed-bar" id="speedBar">
@@ -1661,6 +1843,25 @@ That saved a wretch like me"></textarea>
         })
         .catch(() => {}); // silently fail — not critical
     }
+
+    // ── Guided flow: video loaded → move user toward lyrics editor ──
+    onVideoLoaded();
+  }
+
+  // Guided flow handler — called after video is loaded
+  function onVideoLoaded() {
+    updateStep(els.lyricsInput.value.trim() ? 3 : 2);
+    // Highlight + scroll + focus the editor (only if it's empty)
+    if (!els.lyricsInput.value.trim()) {
+      // Smooth scroll to the editor
+      try { els.editorPane.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch(e) {}
+      // Soft glow
+      els.editorPane.classList.remove('glow');
+      void els.editorPane.offsetWidth; // restart animation
+      els.editorPane.classList.add('glow');
+      // Focus textarea after the scroll settles
+      setTimeout(() => els.lyricsInput.focus(), 350);
+    }
   }
 
   els.loadVideoBtn.addEventListener('click', loadVideo);
@@ -1687,11 +1888,72 @@ That saved a wretch like me"></textarea>
     setTimeout(() => els.toast.classList.remove('show'), 2200);
   }
 
+  // ═══════════════════
+  //  GUIDED FLOW
+  // ═══════════════════
+
+  function updateStep(activeStep) {
+    document.querySelectorAll('.step').forEach(stepEl => {
+      const n = parseInt(stepEl.dataset.step, 10);
+      stepEl.classList.remove('active', 'done');
+      if (n < activeStep) stepEl.classList.add('done');
+      else if (n === activeStep) stepEl.classList.add('active');
+    });
+  }
+
+  // Recompute step state based on current data (called on init and on text changes)
+  function recomputeStep() {
+    const hasVideo = !!currentVideoId;
+    const hasLyrics = els.lyricsInput.value.trim().length > 0;
+    if (hasLyrics) updateStep(3);
+    else if (hasVideo) updateStep(2);
+    else updateStep(1);
+  }
+
+  // ── Paste helper button ──
+  const pasteHelperBtn = document.getElementById('pasteHelperBtn');
+  const pasteHelperMsg = document.getElementById('pasteHelperMsg');
+
+  pasteHelperBtn.addEventListener('click', () => {
+    els.lyricsInput.focus();
+    // Soft glow on the editor
+    els.editorPane.classList.remove('glow');
+    void els.editorPane.offsetWidth;
+    els.editorPane.classList.add('glow');
+    // Show helper message
+    pasteHelperMsg.classList.add('show');
+    clearTimeout(pasteHelperBtn._hideTimer);
+    pasteHelperBtn._hideTimer = setTimeout(() => pasteHelperMsg.classList.remove('show'), 4500);
+  });
+
+  // ── Detect paste into the lyrics textarea ──
+  els.lyricsInput.addEventListener('paste', () => {
+    setTimeout(() => {
+      if (els.lyricsInput.value.trim()) {
+        showToast('Lyrics added ✓');
+        pasteHelperMsg.classList.remove('show');
+        recomputeStep();
+      }
+    }, 30);
+  });
+
+  // Update step state whenever lyrics change
+  els.lyricsInput.addEventListener('input', recomputeStep);
+
   // ─── Init ───
   renderOutput();
   setMode('transpose');
   loadFromHash();
+  recomputeStep();
 
+  // Auto-focus the YouTube URL input on first load (gives a clear starting point)
+  setTimeout(() => {
+    if (!els.youtubeUrl.value && !els.lyricsInput.value.trim()) {
+      els.youtubeUrl.focus();
+      els.youtubeUrl.classList.add('hint');
+      setTimeout(() => els.youtubeUrl.classList.remove('hint'), 4000);
+    }
+  }, 250);
 
 })();
 </script>
