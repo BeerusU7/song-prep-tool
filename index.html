@@ -1383,6 +1383,85 @@ That saved a wretch like me"></textarea>
   els.resetTranspose.addEventListener('click', () => { transposeSteps = 0; renderOutput(); });
 
   // ═══════════════════
+  //  AUTO-DETECT ON PASTE
+  // ═══════════════════
+
+  els.lyricsInput.addEventListener('paste', () => {
+    setTimeout(() => {
+      const text = els.lyricsInput.value;
+      if (!text.trim()) return;
+
+      const wasEmpty = !els.songTitle.value && els.originalKey.value === 'C';
+      if (!wasEmpty) return; // don't overwrite user's existing entries
+
+      // ── Detect title ──
+      // Look at lines before the first chord line or section header
+      const lines = text.split('\n');
+      let titleCandidate = '';
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed) continue;
+        if (/^\[/.test(trimmed)) break; // hit a section header, stop
+        if (isChordLine(trimmed)) break; // hit chords, stop
+        // This line is plain text before any chords/sections — likely a title
+        titleCandidate = trimmed;
+        break;
+      }
+      if (titleCandidate && titleCandidate.length <= 80) {
+        els.songTitle.value = titleCandidate;
+      }
+
+      // ── Detect key ──
+      // Collect all root notes from chord lines, weight first and last chords heavily
+      const roots = [];
+      let firstRoot = null;
+      let lastRoot = null;
+
+      for (const line of lines) {
+        if (!isChordLine(line)) continue;
+        const matches = line.match(/\b([A-G][#b]?)(?:m|min|maj|dim|aug|sus|add|dom)?/g);
+        if (!matches) continue;
+        for (const m of matches) {
+          const root = m.match(/^([A-G][#b]?)/);
+          if (root) {
+            roots.push(root[1]);
+            if (!firstRoot) firstRoot = root[1];
+            lastRoot = root[1];
+          }
+        }
+      }
+
+      if (roots.length === 0) return;
+
+      // Count frequency
+      const freq = {};
+      for (const r of roots) freq[r] = (freq[r] || 0) + 1;
+
+      // Boost first and last chord (strong key indicators)
+      if (firstRoot) freq[firstRoot] = (freq[firstRoot] || 0) + 3;
+      if (lastRoot) freq[lastRoot] = (freq[lastRoot] || 0) + 3;
+      // Extra boost if first === last (very strong signal)
+      if (firstRoot && firstRoot === lastRoot) freq[firstRoot] += 2;
+
+      // Find the most likely key
+      let bestNote = roots[0];
+      let bestScore = 0;
+      for (const [note, count] of Object.entries(freq)) {
+        if (count > bestScore) { bestScore = count; bestNote = note; }
+      }
+
+      // Set the key — match to available options
+      if (ALL_KEYS.includes(bestNote)) {
+        els.originalKey.value = bestNote;
+      }
+
+      transposeSteps = 0;
+      renderOutput();
+      showToast('Key and title auto-detected');
+    }, 50);
+  });
+
+  // ═══════════════════
   //  OUTPUT ACTIONS
   // ═══════════════════
 
