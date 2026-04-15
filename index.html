@@ -171,6 +171,121 @@
     .topbar-select:focus { outline: none; border-color: var(--border-focus); box-shadow: 0 0 0 3px var(--primary-light); }
     .topbar-spacer { flex: 1; }
 
+    /* ── KEY AUTO-DETECT CONFIRM POPOVER ── */
+    .key-field { position: relative; }
+
+    .key-field.flashing .topbar-select {
+      animation: keySelectPulse 1.2s ease-in-out 2;
+      border-color: var(--primary);
+    }
+
+    @keyframes keySelectPulse {
+      0%, 100% { box-shadow: 0 0 0 0 var(--primary-light); }
+      50%      { box-shadow: 0 0 0 4px var(--primary-light); }
+    }
+
+    .key-confirm {
+      display: none;
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 0;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px 7px 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: var(--shadow-md);
+      font-size: 0.73rem;
+      color: var(--text);
+      z-index: 120;
+      white-space: nowrap;
+    }
+
+    .key-confirm.visible {
+      display: inline-flex;
+      animation: keyConfirmIn 0.28s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+
+    @keyframes keyConfirmIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .key-confirm::before {
+      content: '';
+      position: absolute;
+      top: -5px;
+      left: 18px;
+      width: 9px;
+      height: 9px;
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      border-top: 1px solid var(--border);
+      transform: rotate(45deg);
+    }
+
+    .key-confirm-spark {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .key-confirm-text { color: var(--text-secondary); }
+    .key-confirm-text strong {
+      color: var(--primary);
+      font-weight: 700;
+      padding: 1px 6px;
+      background: var(--primary-light);
+      border-radius: 4px;
+      margin: 0 1px;
+    }
+
+    .key-confirm-ok,
+    .key-confirm-change {
+      padding: 3px 10px;
+      border: none;
+      border-radius: 5px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: var(--font-sans);
+    }
+
+    .key-confirm-ok {
+      background: var(--primary);
+      color: #fff;
+    }
+    .key-confirm-ok:hover { background: var(--primary-hover); }
+
+    .key-confirm-change {
+      background: transparent;
+      color: var(--text-secondary);
+      text-decoration: underline;
+      text-decoration-color: var(--text-tertiary);
+      text-underline-offset: 2px;
+    }
+    .key-confirm-change:hover { color: var(--text); }
+
+    .key-confirm-close {
+      width: 20px;
+      height: 20px;
+      padding: 0;
+      background: transparent;
+      border: none;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition);
+    }
+    .key-confirm-close:hover { color: var(--text); background: var(--surface-alt); }
+
     /* ── TOOLBAR ICONS ── */
     .toolbar-group {
       display: flex;
@@ -218,6 +333,139 @@
     }
 
     .tb-btn:hover[title]::after { opacity: 1; }
+
+    /* ── SONGS MENU ── */
+    .songs-menu-wrap { position: relative; }
+
+    .songs-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: 280px;
+      max-height: 400px;
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      z-index: 150;
+      flex-direction: column;
+    }
+
+    .songs-menu.open {
+      display: flex;
+      animation: songsMenuIn 0.22s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+
+    @keyframes songsMenuIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .songs-menu-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .songs-menu-title {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-tertiary);
+    }
+
+    .songs-new-btn {
+      padding: 3px 10px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border: none;
+      border-radius: var(--radius-xs);
+      font-size: 0.7rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition);
+      font-family: var(--font-sans);
+    }
+
+    .songs-new-btn:hover { background: var(--primary); color: #fff; }
+
+    .songs-menu-list {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+    }
+
+    .songs-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      cursor: pointer;
+      transition: background var(--transition);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .songs-menu-item:last-child { border-bottom: none; }
+    .songs-menu-item:hover { background: var(--surface-alt); }
+    .songs-menu-item.active { background: var(--primary-light); }
+
+    .songs-menu-item-body { flex: 1; min-width: 0; }
+
+    .songs-menu-item-title {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+
+    .songs-menu-item-meta {
+      font-size: 0.68rem;
+      color: var(--text-tertiary);
+      margin-top: 1px;
+    }
+
+    .songs-menu-item-meta strong {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .songs-menu-item-delete {
+      width: 22px;
+      height: 22px;
+      padding: 0;
+      background: transparent;
+      border: none;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      border-radius: 4px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all var(--transition);
+    }
+
+    .songs-menu-item:hover .songs-menu-item-delete { display: inline-flex; }
+    .songs-menu-item-delete:hover { color: #dc2626; background: rgba(220, 38, 38, 0.08); }
+
+    .songs-menu-empty {
+      padding: 24px 16px;
+      font-size: 0.78rem;
+      color: var(--text-tertiary);
+      text-align: center;
+      line-height: 1.45;
+    }
+
+    .songs-menu-empty.hidden { display: none; }
 
     /* ── MODE TABS ── */
     .mode-tabs {
@@ -434,6 +682,29 @@
 
     .editor-tab:hover { color: var(--text); }
     .editor-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+    /* Gentle nudge on Preview tab when user should peek at their formatted song */
+    .editor-tab.has-hint {
+      color: var(--text);
+    }
+
+    .editor-tab.has-hint::after {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--primary);
+      margin-left: 6px;
+      vertical-align: middle;
+      animation: previewHintPulse 1.6s ease-in-out infinite;
+      box-shadow: 0 0 0 0 var(--primary-light);
+    }
+
+    @keyframes previewHintPulse {
+      0%, 100% { box-shadow: 0 0 0 0 var(--primary-light); }
+      50%      { box-shadow: 0 0 0 5px rgba(255, 111, 0, 0); }
+    }
 
     .editor-pane { flex: 1; overflow-y: auto; min-height: 0; }
 
@@ -665,6 +936,161 @@
     .speed-btn:hover { background: var(--primary-light); color: var(--primary); }
     .speed-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 
+    /* ── A-B LOOP BAR ── */
+    .loop-bar {
+      display: flex;
+      gap: 4px;
+      padding: 7px 16px;
+      border-top: 1px solid var(--border);
+      align-items: center;
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+
+    .loop-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      transition: all var(--transition);
+      font-family: var(--font-sans);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .loop-btn:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
+
+    .loop-btn.set {
+      background: var(--primary-light);
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .loop-time {
+      font-weight: 500;
+      font-size: 0.7rem;
+      opacity: 0.85;
+    }
+
+    .loop-toggle {
+      width: 28px;
+      height: 24px;
+      padding: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      cursor: pointer;
+      color: var(--text-tertiary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition);
+      margin-left: 2px;
+    }
+
+    .loop-toggle:hover { color: var(--text); border-color: var(--text-tertiary); }
+
+    .loop-toggle.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    .loop-toggle.active svg { animation: loopSpin 2.5s linear infinite; }
+
+    @keyframes loopSpin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    /* ── FIND CHORDS HINT (contextual, under video) ── */
+    .yt-findchords-hint {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 10px 16px;
+      background: var(--primary-light);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .yt-findchords-hint.visible {
+      display: flex;
+      animation: completionFadeIn 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+
+    .yt-findchords-text {
+      font-size: 0.76rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .yt-findchords-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-xs);
+      font-size: 0.72rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background var(--transition);
+      font-family: var(--font-sans);
+      white-space: nowrap;
+    }
+
+    .yt-findchords-btn:hover { background: var(--primary-hover); }
+
+    /* ── ARSHIP PROMO under video ── */
+    .yt-promo {
+      padding: 14px 16px 16px;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+      background: var(--surface);
+    }
+
+    .yt-promo-title {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.35;
+      letter-spacing: -0.01em;
+    }
+
+    .yt-promo-sub {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      margin-top: 3px;
+      line-height: 1.4;
+    }
+
+    .yt-promo-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.74rem;
+      font-weight: 500;
+      color: var(--primary);
+      text-decoration: none;
+      margin-top: 8px;
+      transition: color var(--transition);
+    }
+
+    .yt-promo-cta:hover { color: var(--primary-hover); }
+    .yt-promo-cta svg { transition: transform var(--transition); }
+    .yt-promo-cta:hover svg { transform: translateX(2px); }
+
     /* ── BUTTONS ── */
     .btn {
       display: inline-flex;
@@ -691,6 +1117,21 @@
     .btn-ghost { background: transparent; border-color: transparent; color: var(--text-secondary); }
     .btn-ghost:hover { background: var(--surface-alt); color: var(--text); border-color: var(--border); }
     .btn-sm { padding: 4px 10px; font-size: 0.72rem; }
+
+    /* Quiet text-only action used for secondary actions like "Find chords" */
+    .action-link {
+      padding: 4px 6px;
+      background: transparent;
+      border: none;
+      color: var(--text-tertiary);
+      font-size: 0.72rem;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      transition: color var(--transition);
+    }
+
+    .action-link:hover { color: var(--text-secondary); text-decoration: underline; text-underline-offset: 2px; }
 
     /* ── FULLSCREEN PRACTICE ── */
     .fullscreen-overlay {
@@ -814,10 +1255,230 @@
     .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
     .hidden { display: none !important; }
 
+    /* ── COMPLETION STATE ── */
+    .completion-state {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      background: linear-gradient(90deg, rgba(22, 163, 74, 0.08), rgba(22, 163, 74, 0.02));
+      border-bottom: 1px solid rgba(22, 163, 74, 0.18);
+      flex-shrink: 0;
+    }
+
+    .completion-state.visible {
+      display: flex;
+      animation: completionFadeIn 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+
+    @keyframes completionFadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    [data-theme="dark"] .completion-state {
+      background: linear-gradient(90deg, rgba(74, 222, 128, 0.1), rgba(74, 222, 128, 0.02));
+      border-bottom-color: rgba(74, 222, 128, 0.18);
+    }
+
+    .completion-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(22, 163, 74, 0.14);
+      color: #16a34a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    [data-theme="dark"] .completion-icon {
+      background: rgba(74, 222, 128, 0.18);
+      color: #4ade80;
+    }
+
+    .completion-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .completion-kicker {
+      font-size: 0.66rem;
+      font-weight: 500;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      line-height: 1.2;
+      margin-bottom: 1px;
+    }
+
+    .completion-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.01em;
+      line-height: 1.25;
+    }
+
+    .completion-sub {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      margin-top: 2px;
+      line-height: 1.35;
+    }
+
+    .completion-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .completion-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-xs);
+      font-size: 0.73rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background var(--transition), transform var(--transition);
+      font-family: var(--font-sans);
+      white-space: nowrap;
+    }
+
+    .completion-primary:hover { background: var(--primary-hover); }
+    .completion-primary:active { transform: scale(0.97); }
+
+    .completion-secondary {
+      padding: 5px 8px;
+      background: transparent;
+      color: var(--text-secondary);
+      border: none;
+      border-radius: var(--radius-xs);
+      font-size: 0.7rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color var(--transition);
+      font-family: var(--font-sans);
+      white-space: nowrap;
+      text-decoration: underline;
+      text-decoration-color: var(--text-tertiary);
+      text-underline-offset: 2px;
+    }
+
+    .completion-secondary:hover { color: var(--text); text-decoration-color: var(--text); }
+
+    .completion-close {
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      background: transparent;
+      border: none;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition);
+      margin-left: 2px;
+    }
+
+    .completion-close:hover { color: var(--text); background: var(--surface-alt); }
+
+    /* ── APP FOOTER ── */
+    .app-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 9px 20px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+      flex-wrap: wrap;
+      transition: background var(--transition), border-color var(--transition);
+    }
+
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.7rem;
+      color: var(--text-tertiary);
+    }
+
+    .footer-left strong {
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .footer-tagline {
+      color: var(--text-tertiary);
+      letter-spacing: 0.01em;
+    }
+
+    .footer-dot {
+      color: var(--text-tertiary);
+      opacity: 0.5;
+    }
+
+    .footer-cta {
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--primary);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: color var(--transition);
+    }
+
+    .footer-cta:hover { color: var(--primary-hover); text-decoration: underline; }
+
+    .footer-cta svg { transition: transform var(--transition); }
+    .footer-cta:hover svg { transform: translateX(2px); }
+
+    /* ── SONG READY BADGE ── */
+    .song-ready-badge {
+      display: none;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #16a34a;
+      background: rgba(22, 163, 74, 0.1);
+      padding: 3px 10px;
+      border-radius: 999px;
+      letter-spacing: 0.01em;
+      margin-left: 8px;
+    }
+
+    [data-theme="dark"] .song-ready-badge {
+      color: #4ade80;
+      background: rgba(74, 222, 128, 0.14);
+    }
+
+    .song-ready-badge.visible {
+      display: inline-flex;
+      animation: readyFadeIn 0.4s ease;
+    }
+
+    @keyframes readyFadeIn {
+      from { opacity: 0; transform: translateY(-2px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
     /* ── PRINT ── */
     @media print {
       body { background: #fff !important; color: #000 !important; }
-      .topbar, .transpose-strip, .panel-side, .action-bar, .editor-tabs, .toast, .pdf-topbar, .fullscreen-overlay, .step-bar, .paste-helper-bar, .ready-label { display: none !important; }
+      .topbar, .transpose-strip, .panel-side, .action-bar, .editor-tabs, .toast, .pdf-topbar, .fullscreen-overlay, .step-bar, .paste-helper-bar, .ready-label, .completion-state, .app-footer, .key-confirm, .songs-menu, .loop-bar { display: none !important; }
       .workspace { display: block !important; overflow: visible !important; }
       .panel-main { width: 100% !important; }
       .editor-pane { overflow: visible !important; }
@@ -1004,9 +1665,23 @@
       .transpose-strip { padding: 6px 14px; gap: 8px; }
       .fs-content { padding: 20px 5%; font-size: 0.92rem; }
       .capo-label, .nashville-toggle { display: none; }
+      .bpm-display { display: none; }
+      .key-confirm { font-size: 0.68rem; padding: 6px 8px; gap: 5px; white-space: normal; max-width: calc(100vw - 28px); }
+      .key-confirm-text { min-width: 0; }
+      .songs-menu { width: calc(100vw - 28px); right: -8px; }
+      .loop-bar { padding: 6px 12px; gap: 3px; }
+      .loop-btn { padding: 3px 8px; font-size: 0.68rem; }
       .step-bar { gap: 8px; padding: 6px 12px; }
       .step { font-size: 0.68rem; }
       .step-divider { width: 10px; }
+      .completion-state { flex-wrap: wrap; gap: 8px; padding: 8px 12px; }
+      .completion-body { flex-basis: 100%; order: 1; }
+      .completion-icon { order: 0; }
+      .completion-actions { order: 2; margin-left: auto; }
+      .completion-secondary { display: none; }
+      .app-footer { padding: 8px 12px; gap: 6px; }
+      .footer-left { font-size: 0.65rem; gap: 6px; }
+      .footer-cta { font-size: 0.65rem; }
     }
 
     @media (max-width: 500px) {
@@ -1032,9 +1707,20 @@
     <input type="text" id="songTitle" class="topbar-input" placeholder="Auto-fills from YouTube...">
   </div>
 
-  <div class="topbar-field">
+  <div class="topbar-field key-field">
     <label for="originalKey">Key</label>
     <select id="originalKey" class="topbar-select"></select>
+    <div class="key-confirm" id="keyConfirm" role="status" aria-live="polite">
+      <span class="key-confirm-spark" aria-hidden="true">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 6.4L21 11l-6.6 2.6L12 20l-2.4-6.4L3 11l6.6-2.6L12 2z"/></svg>
+      </span>
+      <span class="key-confirm-text">Key set to <strong id="keyConfirmKey">—</strong>. Is that right?</span>
+      <button class="key-confirm-ok" id="keyConfirmOk">Yes</button>
+      <button class="key-confirm-change" id="keyConfirmChange">Change</button>
+      <button class="key-confirm-close" id="keyConfirmClose" aria-label="Dismiss">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
   </div>
 
   <div class="topbar-spacer"></div>
@@ -1047,13 +1733,26 @@
   <div class="topbar-divider"></div>
 
   <div class="toolbar-group">
+    <div class="songs-menu-wrap">
+      <button class="tb-btn" id="songsBtn" title="My songs" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      </button>
+      <div class="songs-menu" id="songsMenu" role="menu">
+        <div class="songs-menu-header">
+          <span class="songs-menu-title">Your songs</span>
+          <button class="songs-new-btn" id="songsNewBtn">+ New song</button>
+        </div>
+        <div class="songs-menu-list" id="songsMenuList"></div>
+        <div class="songs-menu-empty" id="songsMenuEmpty">No saved songs yet. Start editing — it auto-saves.</div>
+      </div>
+    </div>
     <button class="tb-btn" id="darkModeBtn" title="Dark mode">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
     <button class="tb-btn" id="fullscreenBtn" title="Practice">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
     </button>
-    <button class="tb-btn" id="shareBtn" title="Share">
+    <button class="tb-btn" id="shareBtn" title="Share Prep">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
     </button>
   </div>
@@ -1080,6 +1779,11 @@
     Nashville #
   </label>
 
+  <div class="tap-tempo">
+    <button class="tap-btn" id="tapTempoBtn">Tap BPM</button>
+    <span class="bpm-display" id="bpmDisplay"></span>
+  </div>
+
   <span class="pdf-notice hidden" id="pdfNotice">PDF charts are view-only</span>
 </div>
 
@@ -1090,6 +1794,10 @@
   <div class="step" data-step="2"><span class="step-num"><span>2</span></span>Paste lyrics + chords</div>
   <div class="step-divider"></div>
   <div class="step" data-step="3"><span class="step-num"><span>3</span></span>Transpose & practice</div>
+  <span class="song-ready-badge" id="songReadyBadge">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    Song ready
+  </span>
 </div>
 
 <!-- ════ WORKSPACE ════ -->
@@ -1101,10 +1809,33 @@
         <button class="editor-tab active" data-tab="edit">Edit</button>
         <button class="editor-tab" data-tab="preview">Preview</button>
       </div>
+
+      <!-- Completion state — appears when both video + lyrics are present -->
+      <div class="completion-state" id="completionState" role="status" aria-live="polite">
+        <div class="completion-icon" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="completion-body">
+          <div class="completion-kicker">You're all set.</div>
+          <div class="completion-title">Ready for rehearsal ✔</div>
+          <div class="completion-sub">Your team can start practicing this now.</div>
+        </div>
+        <div class="completion-actions">
+          <button class="completion-primary" id="completionSendBtn">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+            Send to team
+          </button>
+          <button class="completion-secondary" id="completionCopyBtn">Copy link</button>
+          <button class="completion-close" id="completionClose" aria-label="Dismiss">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+
       <div class="paste-helper-bar" id="pasteHelperBar">
         <button class="paste-helper-btn" id="pasteHelperBtn">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Paste lyrics here
+          Paste lyrics here (Ctrl+V / Cmd+V)
         </button>
         <span class="paste-helper-msg" id="pasteHelperMsg">Copy lyrics from any site, then paste them here (Cmd / Ctrl + V)</span>
       </div>
@@ -1112,10 +1843,10 @@
         <textarea class="lyrics-editor" id="lyricsInput" placeholder="[Verse 1]
 Paste your lyrics here...
 
-G                            C
+G                 C
 Add chords above lines, or inline
-D                          G
-Transpose with the buttons above"></textarea>
+
+Tip: load a YouTube reference, then paste lyrics or find chords to get started."></textarea>
       </div>
       <div class="editor-pane hidden" id="previewPane">
         <div id="printHeader" style="display:none;">
@@ -1141,15 +1872,7 @@ Transpose with the buttons above"></textarea>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
           Print
         </button>
-        <button class="btn btn-sm" id="findChordsBtn" title="Search for chords online">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          Find Chords
-        </button>
-        <div class="spacer"></div>
-        <div class="tap-tempo">
-          <button class="tap-btn" id="tapTempoBtn">Tap BPM</button>
-          <span class="bpm-display" id="bpmDisplay"></span>
-        </div>
+        <button class="action-link" id="findChordsBtn" title="Search for chords online">Find chords</button>
       </div>
     </div>
 
@@ -1191,6 +1914,35 @@ Transpose with the buttons above"></textarea>
         <button class="speed-btn" data-speed="0.75">0.75x</button>
         <button class="speed-btn active" data-speed="1">1x</button>
       </div>
+
+      <!-- Section A-B loop: practice a specific passage on repeat -->
+      <div class="loop-bar" id="loopBar">
+        <span class="speed-bar-label">Loop</span>
+        <button class="loop-btn" id="loopSetA" title="Set loop start (A)">A <span class="loop-time" id="loopTimeA">—</span></button>
+        <button class="loop-btn" id="loopSetB" title="Set loop end (B)">B <span class="loop-time" id="loopTimeB">—</span></button>
+        <button class="loop-toggle" id="loopToggle" title="Toggle loop">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        </button>
+      </div>
+
+      <!-- Contextual Find Chords hint: shows when video is loaded but lyrics are empty -->
+      <div class="yt-findchords-hint" id="ytFindChordsHint">
+        <span class="yt-findchords-text">Need chords for this?</span>
+        <button class="yt-findchords-btn" id="ytFindChordsBtn">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Find chords
+        </button>
+      </div>
+
+      <!-- Arship promo under video -->
+      <div class="yt-promo">
+        <div class="yt-promo-title">This is how your team should be preparing every week</div>
+        <div class="yt-promo-sub">Arship is where rehearsal actually begins.</div>
+        <a href="https://arship.app" target="_blank" rel="noopener" class="yt-promo-cta">
+          Join early access
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
     </div>
   </div>
 </div>
@@ -1214,6 +1966,19 @@ Transpose with the buttons above"></textarea>
     <input type="range" class="fs-scroll-range" id="fsScrollSpeed" min="0" max="5" step="0.5" value="1">
     <span class="fs-scroll-speed" id="fsScrollLabel">1x</span>
   </div>
+</div>
+
+<!-- ════ APP FOOTER ════ -->
+<div class="app-footer">
+  <div class="footer-left">
+    <strong>Prep by Arship</strong>
+    <span class="footer-dot">·</span>
+    <span class="footer-tagline">Prepare the song. Walk into rehearsal ready.</span>
+  </div>
+  <a href="https://arship.app" target="_blank" rel="noopener" class="footer-cta">
+    Join early access for Arship — prepare with your whole team
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+  </a>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -1263,12 +2028,17 @@ Transpose with the buttons above"></textarea>
   };
 
   // ─── Init keys ───
+  // First option is empty placeholder (no key picked yet)
+  const placeholderOpt = document.createElement('option');
+  placeholderOpt.value = '';
+  placeholderOpt.textContent = '—';
+  els.originalKey.appendChild(placeholderOpt);
   ALL_KEYS.forEach(k => {
     const opt = document.createElement('option');
     opt.value = k; opt.textContent = k;
     els.originalKey.appendChild(opt);
   });
-  els.originalKey.value = 'C';
+  els.originalKey.value = '';
 
   // ═══════════════════
   //  DARK MODE
@@ -1403,8 +2173,8 @@ Transpose with the buttons above"></textarea>
     const transposed = transposeText(originalText, transposeSteps);
     const currentKey = getCurrentKey();
 
-    els.origKeyLabel.textContent = els.originalKey.value;
-    els.currKeyLabel.textContent = currentKey;
+    els.origKeyLabel.textContent = els.originalKey.value || '—';
+    els.currKeyLabel.textContent = currentKey || '—';
 
     const sign = transposeSteps > 0 ? '+' : '';
     els.offsetBadge.textContent = transposeSteps === 0 ? '0' : sign + transposeSteps;
@@ -1504,11 +2274,43 @@ Transpose with the buttons above"></textarea>
     document.querySelectorAll('.editor-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
     if (tab === 'edit') { els.editorPane.classList.remove('hidden'); els.previewPane.classList.add('hidden'); }
     else { els.editorPane.classList.add('hidden'); els.previewPane.classList.remove('hidden'); renderOutput(); }
+    // Once the user opens Preview, stop nudging them toward it
+    if (tab === 'preview') clearPreviewHint();
   }
 
   document.querySelectorAll('.editor-tab').forEach(tab => {
     tab.addEventListener('click', () => setEditorTab(tab.dataset.tab));
   });
+
+  // ── Preview tab gentle hint ──
+  // When lyrics are present and the user hasn't opened Preview yet in this
+  // editing cycle, show a soft pulse on the Preview tab to suggest the next step.
+  let previewHintSeen = false;
+
+  function maybeShowPreviewHint() {
+    if (previewHintSeen) return;
+    if (editorTab === 'preview') return;
+    const lyricsLen = els.lyricsInput.value.trim().length;
+    // Only nudge once the user has clearly committed content (not a single chord)
+    if (lyricsLen < 15) return;
+    const previewTab = document.querySelector('.editor-tab[data-tab="preview"]');
+    if (previewTab) previewTab.classList.add('has-hint');
+  }
+
+  function clearPreviewHint() {
+    previewHintSeen = true;
+    const previewTab = document.querySelector('.editor-tab[data-tab="preview"]');
+    if (previewTab) previewTab.classList.remove('has-hint');
+  }
+
+  // If user clears everything, re-arm so the hint can show again next time
+  function resetPreviewHintIfEmpty() {
+    if (els.lyricsInput.value.trim().length === 0) {
+      previewHintSeen = false;
+      const previewTab = document.querySelector('.editor-tab[data-tab="preview"]');
+      if (previewTab) previewTab.classList.remove('has-hint');
+    }
+  }
 
   // ═══════════════════
   //  NASHVILLE NUMBERS
@@ -1622,15 +2424,17 @@ Transpose with the buttons above"></textarea>
     a.click();
     URL.revokeObjectURL(url);
     showToast('Downloaded');
+    if (typeof triggerShareMoment === 'function') triggerShareMoment();
   });
 
   els.printBtn.addEventListener('click', () => {
     if (editorTab === 'edit') setEditorTab('preview');
     setTimeout(() => window.print(), 100);
+    if (typeof triggerShareMoment === 'function') triggerShareMoment();
   });
 
   // Find Chords
-  $('findChordsBtn').addEventListener('click', () => {
+  function openFindChords() {
     const title = els.songTitle.value.trim();
     if (!title) {
       showToast('Add a song title first — or load a YouTube link');
@@ -1638,23 +2442,38 @@ Transpose with the buttons above"></textarea>
     }
     const query = encodeURIComponent(title + ' chords');
     window.open('https://www.google.com/search?q=' + query, '_blank');
-  });
+  }
+  $('findChordsBtn').addEventListener('click', openFindChords);
+  // Contextual hint under the video uses the same handler
+  const ytFindChordsBtnEl = document.getElementById('ytFindChordsBtn');
+  if (ytFindChordsBtnEl) ytFindChordsBtnEl.addEventListener('click', openFindChords);
 
   // ═══════════════════
   //  SHAREABLE LINKS
   // ═══════════════════
 
-  els.shareBtn.addEventListener('click', () => {
-    const data = {
-      t: els.songTitle.value,
-      k: els.originalKey.value,
-      s: transposeSteps,
-      l: els.lyricsInput.value,
+  // Share the tool itself — simple, team-oriented
+  function shareTool() {
+    const url = window.location.origin + window.location.pathname;
+    const fallbackCopy = () => {
+      const ta = document.createElement('textarea');
+      ta.value = url;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch(e) {}
+      document.body.removeChild(ta);
     };
-    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
-    const url = window.location.origin + window.location.pathname + '#song=' + encoded;
-    navigator.clipboard.writeText(url).then(() => showToast('Share link copied!')).catch(() => showToast('Could not copy link'));
-  });
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url)
+        .then(() => showToast("Link copied. Your team's gonna love this."))
+        .catch(() => { fallbackCopy(); showToast("Link copied. Your team's gonna love this."); });
+    } else {
+      fallbackCopy();
+      showToast("Link copied. Your team's gonna love this.");
+    }
+  }
+
+  els.shareBtn.addEventListener('click', shareTool);
 
   // Load from URL hash
   function loadFromHash() {
@@ -1815,6 +2634,9 @@ Transpose with the buttons above"></textarea>
     if (videoId === currentVideoId) return;
     currentVideoId = videoId;
 
+    // Reset any active A-B loop from the previous video
+    if (typeof resetLoop === 'function') resetLoop();
+
     const isHttp = window.location.protocol.startsWith('http');
     let embedUrl = 'https://www.youtube.com/embed/' + videoId + '?rel=0&modestbranding=1';
     if (isHttp) embedUrl += '&enablejsapi=1&origin=' + encodeURIComponent(window.location.origin);
@@ -1850,9 +2672,15 @@ Transpose with the buttons above"></textarea>
 
   // Guided flow handler — called after video is loaded
   function onVideoLoaded() {
-    updateStep(els.lyricsInput.value.trim() ? 3 : 2);
+    const hasLyrics = els.lyricsInput.value.trim().length > 0;
+
+    // Use the unified recomputeStep so everything (steps, ready badge,
+    // Find Chords hint, completion state) stays in sync.
+    if (typeof recomputeStep === 'function') recomputeStep();
+    else updateStep(hasLyrics ? 3 : 2);
+
     // Highlight + scroll + focus the editor (only if it's empty)
-    if (!els.lyricsInput.value.trim()) {
+    if (!hasLyrics) {
       // Smooth scroll to the editor
       try { els.editorPane.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch(e) {}
       // Soft glow
@@ -1862,6 +2690,9 @@ Transpose with the buttons above"></textarea>
       // Focus textarea after the scroll settles
       setTimeout(() => els.lyricsInput.focus(), 350);
     }
+
+    // Subtle share prompt after the user got value
+    if (typeof triggerShareMoment === 'function') triggerShareMoment();
   }
 
   els.loadVideoBtn.addEventListener('click', loadVideo);
@@ -1880,6 +2711,98 @@ Transpose with the buttons above"></textarea>
       btn.classList.add('active');
     });
   });
+
+  // ═══════════════════
+  //  A–B SECTION LOOP
+  // ═══════════════════
+  // Purely a solo practice aid: capture two timestamps on the video and
+  // have the player jump back to A whenever it crosses B.
+
+  const loopSetA = document.getElementById('loopSetA');
+  const loopSetB = document.getElementById('loopSetB');
+  const loopToggle = document.getElementById('loopToggle');
+  const loopTimeA = document.getElementById('loopTimeA');
+  const loopTimeB = document.getElementById('loopTimeB');
+
+  let loopA = null;     // seconds
+  let loopB = null;     // seconds
+  let loopActive = false;
+  let loopPollId = null;
+
+  function fmtTime(sec) {
+    if (sec == null) return '—';
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return m + ':' + String(s).padStart(2, '0');
+  }
+
+  function getYtTime() {
+    try { return (ytPlayer && ytPlayer.getCurrentTime) ? ytPlayer.getCurrentTime() : null; }
+    catch (e) { return null; }
+  }
+
+  function updateLoopButtons() {
+    loopTimeA.textContent = fmtTime(loopA);
+    loopTimeB.textContent = fmtTime(loopB);
+    loopSetA.classList.toggle('set', loopA != null);
+    loopSetB.classList.toggle('set', loopB != null);
+    loopToggle.classList.toggle('active', loopActive);
+  }
+
+  function startLoopPolling() {
+    stopLoopPolling();
+    loopPollId = setInterval(() => {
+      if (!loopActive || loopA == null || loopB == null) return;
+      const t = getYtTime();
+      if (t == null) return;
+      if (t >= loopB || t < loopA - 0.5) {
+        try { ytPlayer.seekTo(loopA, true); } catch (e) {}
+      }
+    }, 250);
+  }
+
+  function stopLoopPolling() {
+    if (loopPollId) { clearInterval(loopPollId); loopPollId = null; }
+  }
+
+  loopSetA.addEventListener('click', () => {
+    const t = getYtTime();
+    if (t == null) { showToast('Load a video first'); return; }
+    loopA = t;
+    // If B is already before A, clear it
+    if (loopB != null && loopB <= loopA) loopB = null;
+    updateLoopButtons();
+  });
+
+  loopSetB.addEventListener('click', () => {
+    const t = getYtTime();
+    if (t == null) { showToast('Load a video first'); return; }
+    if (loopA == null) { showToast('Set the start (A) first'); return; }
+    if (t <= loopA) { showToast('End must come after start'); return; }
+    loopB = t;
+    // Auto-activate when both are set
+    loopActive = true;
+    startLoopPolling();
+    updateLoopButtons();
+  });
+
+  loopToggle.addEventListener('click', () => {
+    if (loopA == null || loopB == null) {
+      showToast('Set A and B first');
+      return;
+    }
+    loopActive = !loopActive;
+    if (loopActive) startLoopPolling();
+    else stopLoopPolling();
+    updateLoopButtons();
+  });
+
+  // Reset loop when video changes
+  function resetLoop() {
+    loopA = null; loopB = null; loopActive = false;
+    stopLoopPolling();
+    updateLoopButtons();
+  }
 
   // ─── Toast ───
   function showToast(msg) {
@@ -1901,6 +2824,60 @@ Transpose with the buttons above"></textarea>
     });
   }
 
+  // ═══════════════════
+  //  COMPLETION STATE
+  // ═══════════════════
+  // Shows when BOTH a YouTube video is loaded AND lyrics are present.
+  // Once dismissed (X or Copy link), stays hidden until the user "completes
+  // again" — defined as: lyrics were emptied and then refilled (or video
+  // was replaced) while the flag is already set.
+
+  const completionState = document.getElementById('completionState');
+  const completionCopyBtn = document.getElementById('completionCopyBtn');
+  const completionSendBtn = document.getElementById('completionSendBtn');
+  const completionClose = document.getElementById('completionClose');
+
+  let completionShown = false;   // has it been shown/dismissed this cycle?
+  let completionArmed = true;    // can it show when conditions are met?
+
+  function evaluateCompletion() {
+    const hasVideo = !!currentVideoId;
+    const hasLyrics = els.lyricsInput.value.trim().length > 0;
+    const complete = hasVideo && hasLyrics;
+
+    if (complete) {
+      if (completionArmed && !completionShown) {
+        completionState.classList.add('visible');
+        completionShown = true;
+      }
+    } else {
+      // Conditions no longer met — hide + re-arm for next completion
+      if (completionState.classList.contains('visible')) {
+        completionState.classList.remove('visible');
+      }
+      completionShown = false;
+      completionArmed = true;
+    }
+  }
+
+  function dismissCompletion() {
+    completionState.classList.remove('visible');
+    // Don't show again until they break + re-complete
+    completionArmed = false;
+  }
+
+  completionCopyBtn.addEventListener('click', () => {
+    shareTool();
+    dismissCompletion();
+  });
+
+  completionSendBtn.addEventListener('click', () => {
+    shareTool();
+    dismissCompletion();
+  });
+
+  completionClose.addEventListener('click', dismissCompletion);
+
   // Recompute step state based on current data (called on init and on text changes)
   function recomputeStep() {
     const hasVideo = !!currentVideoId;
@@ -1908,23 +2885,144 @@ Transpose with the buttons above"></textarea>
     if (hasLyrics) updateStep(3);
     else if (hasVideo) updateStep(2);
     else updateStep(1);
+
+    // Show the "Song ready ✓" badge when BOTH a video and lyrics are present
+    const readyBadge = document.getElementById('songReadyBadge');
+    if (readyBadge) {
+      readyBadge.classList.toggle('visible', hasVideo && hasLyrics);
+    }
+
+    // Contextual Find Chords hint — show only when video is loaded AND lyrics still empty
+    const ytFindChordsHint = document.getElementById('ytFindChordsHint');
+    if (ytFindChordsHint) {
+      ytFindChordsHint.classList.toggle('visible', hasVideo && !hasLyrics);
+    }
+
+    // Evaluate the inline completion banner
+    evaluateCompletion();
   }
+
+  // No-op stub so existing calls (video-load, paste, print, download) keep working
+  // without spawning floating banners — the inline completion state handles all prompts.
+  function triggerShareMoment() { /* superseded by completion state */ }
 
   // ── Paste helper button ──
   const pasteHelperBtn = document.getElementById('pasteHelperBtn');
   const pasteHelperMsg = document.getElementById('pasteHelperMsg');
 
-  pasteHelperBtn.addEventListener('click', () => {
+  // Helper: insert text into the lyrics textarea at the caret (or replace selection)
+  function insertIntoLyrics(text) {
+    const ta = els.lyricsInput;
+    ta.focus();
+    const start = ta.selectionStart || 0;
+    const end = ta.selectionEnd || 0;
+    ta.value = ta.value.substring(0, start) + text + ta.value.substring(end);
+    const newPos = start + text.length;
+    ta.setSelectionRange(newPos, newPos);
+    // Fire events so auto-detect + step logic run
+    ta.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  pasteHelperBtn.addEventListener('click', async () => {
     els.lyricsInput.focus();
     // Soft glow on the editor
     els.editorPane.classList.remove('glow');
     void els.editorPane.offsetWidth;
     els.editorPane.classList.add('glow');
-    // Show helper message
+
+    // Try to read from clipboard directly (saves the user from Cmd+V)
+    if (navigator.clipboard && navigator.clipboard.readText) {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text && text.trim()) {
+          insertIntoLyrics(text);
+          // Run key heuristic if no key set yet (prompts user to confirm)
+          applyKeyGuess(els.lyricsInput.value);
+          recomputeStep();
+          renderOutput();
+          showToast('Lyrics added ✓');
+          maybeShowPreviewHint();
+          return; // success — no need to show the helper message
+        }
+      } catch (e) {
+        // Permission denied or not available — fall through to helper message
+      }
+    }
+
+    // Fallback: show the helper message explaining Cmd+V / Ctrl+V
     pasteHelperMsg.classList.add('show');
     clearTimeout(pasteHelperBtn._hideTimer);
     pasteHelperBtn._hideTimer = setTimeout(() => pasteHelperMsg.classList.remove('show'), 4500);
   });
+
+  // Simple key-guessing heuristic — most frequent root note in chord lines
+  function guessKeyFromText(text) {
+    const counts = {};
+    const lines = text.split('\n');
+    for (const line of lines) {
+      if (!isChordLine(line)) continue;
+      const matches = line.match(/\b([A-G][#b]?)(?:m|min|maj|dim|aug|sus|add|dom|2|3|4|5|6|7|9|11|13)?(?:\/[A-G][#b]?)?\b/g);
+      if (!matches) continue;
+      for (const m of matches) {
+        const root = m.match(/^[A-G][#b]?/)[0];
+        counts[root] = (counts[root] || 0) + 1;
+      }
+    }
+    let best = null, bestCount = 0;
+    for (const k in counts) {
+      if (counts[k] > bestCount) { best = k; bestCount = counts[k]; }
+    }
+    return ALL_KEYS.includes(best) ? best : null;
+  }
+
+  // ── KEY AUTO-DETECT + CONFIRM POPOVER ──
+  const keyConfirm = document.getElementById('keyConfirm');
+  const keyConfirmKey = document.getElementById('keyConfirmKey');
+  const keyConfirmOk = document.getElementById('keyConfirmOk');
+  const keyConfirmChange = document.getElementById('keyConfirmChange');
+  const keyConfirmClose = document.getElementById('keyConfirmClose');
+  const keyField = document.querySelector('.key-field');
+  let keyConfirmHideTimer = null;
+
+  function showKeyConfirm(guessedKey) {
+    keyConfirmKey.textContent = guessedKey;
+    keyConfirm.classList.add('visible');
+    keyField.classList.add('flashing');
+    clearTimeout(keyConfirmHideTimer);
+    keyConfirmHideTimer = setTimeout(hideKeyConfirm, 12000);
+  }
+
+  function hideKeyConfirm() {
+    keyConfirm.classList.remove('visible');
+    keyField.classList.remove('flashing');
+    clearTimeout(keyConfirmHideTimer);
+  }
+
+  keyConfirmOk.addEventListener('click', hideKeyConfirm);
+  keyConfirmClose.addEventListener('click', hideKeyConfirm);
+  keyConfirmChange.addEventListener('click', () => {
+    hideKeyConfirm();
+    els.originalKey.focus();
+    // Try to pop the native dropdown
+    try {
+      if (typeof els.originalKey.showPicker === 'function') els.originalKey.showPicker();
+    } catch (e) {}
+  });
+
+  // Dismiss when user manually changes the key
+  els.originalKey.addEventListener('change', () => {
+    if (keyConfirm.classList.contains('visible')) hideKeyConfirm();
+  });
+
+  // Helper: set key from a guess and prompt the user to confirm
+  function applyKeyGuess(text) {
+    if (els.originalKey.value) return false;
+    const guess = guessKeyFromText(text);
+    if (!guess) return false;
+    els.originalKey.value = guess;
+    showKeyConfirm(guess);
+    return true;
+  }
 
   // ── Detect paste into the lyrics textarea ──
   els.lyricsInput.addEventListener('paste', () => {
@@ -1932,19 +3030,260 @@ Transpose with the buttons above"></textarea>
       if (els.lyricsInput.value.trim()) {
         showToast('Lyrics added ✓');
         pasteHelperMsg.classList.remove('show');
+        // Attempt to auto-detect the key if none set yet
+        applyKeyGuess(els.lyricsInput.value);
         recomputeStep();
+        renderOutput();
+        triggerShareMoment();
+        // Nudge the user toward Preview now that lyrics are committed
+        maybeShowPreviewHint();
       }
     }, 30);
   });
 
   // Update step state whenever lyrics change
-  els.lyricsInput.addEventListener('input', recomputeStep);
+  els.lyricsInput.addEventListener('input', () => {
+    recomputeStep();
+    resetPreviewHintIfEmpty();
+    maybeShowPreviewHint();
+    scheduleAutoSave();
+  });
+
+  // ═══════════════════
+  //  SONG LIBRARY (localStorage)
+  // ═══════════════════
+  // Solo-only storage — nothing about teams or sharing lives here.
+  // Schema: { songs: {[id]: {id,title,key,lyrics,transposeSteps,youtubeUrl,updatedAt}}, currentId }
+
+  const LIBRARY_KEY = 'songprep-library-v1';
+
+  const songsBtn = document.getElementById('songsBtn');
+  const songsMenu = document.getElementById('songsMenu');
+  const songsMenuList = document.getElementById('songsMenuList');
+  const songsMenuEmpty = document.getElementById('songsMenuEmpty');
+  const songsNewBtn = document.getElementById('songsNewBtn');
+
+  let library = { songs: {}, currentId: null };
+  let autoSaveTimer = null;
+  let suppressAutoSave = false; // true while loading a song, to prevent save loops
+
+  function genId() {
+    try { return crypto.randomUUID(); }
+    catch (e) { return 'song_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8); }
+  }
+
+  function loadLibrary() {
+    try {
+      const raw = localStorage.getItem(LIBRARY_KEY);
+      if (raw) library = JSON.parse(raw);
+    } catch (e) { library = { songs: {}, currentId: null }; }
+    if (!library.songs) library.songs = {};
+  }
+
+  function persistLibrary() {
+    try { localStorage.setItem(LIBRARY_KEY, JSON.stringify(library)); }
+    catch (e) { /* storage full or unavailable — fail silently */ }
+  }
+
+  function currentSongData() {
+    return {
+      title: els.songTitle.value,
+      key: els.originalKey.value,
+      lyrics: els.lyricsInput.value,
+      transposeSteps: transposeSteps,
+      youtubeUrl: els.youtubeUrl.value,
+    };
+  }
+
+  function isSongEmpty(s) {
+    return !s.title && !s.lyrics.trim() && !s.youtubeUrl;
+  }
+
+  function autoSaveCurrent() {
+    if (suppressAutoSave) return;
+    const data = currentSongData();
+    if (isSongEmpty(data)) return;
+
+    // Ensure we have a current song
+    if (!library.currentId || !library.songs[library.currentId]) {
+      library.currentId = genId();
+    }
+
+    library.songs[library.currentId] = Object.assign({}, data, {
+      id: library.currentId,
+      updatedAt: Date.now(),
+    });
+
+    persistLibrary();
+  }
+
+  function scheduleAutoSave() {
+    clearTimeout(autoSaveTimer);
+    autoSaveTimer = setTimeout(autoSaveCurrent, 500);
+  }
+
+  function loadSong(id) {
+    const s = library.songs[id];
+    if (!s) return;
+    suppressAutoSave = true;
+    els.songTitle.value = s.title || '';
+    els.originalKey.value = s.key || '';
+    els.lyricsInput.value = s.lyrics || '';
+    transposeSteps = s.transposeSteps || 0;
+    els.youtubeUrl.value = s.youtubeUrl || '';
+    library.currentId = id;
+    persistLibrary();
+    originalText = els.lyricsInput.value;
+    renderOutput();
+
+    // Load YouTube video if present
+    currentVideoId = null; // reset so loadVideo will process
+    if (s.youtubeUrl) loadVideo();
+
+    recomputeStep();
+    suppressAutoSave = false;
+    closeSongsMenu();
+    showToast('Loaded “' + (s.title || 'Untitled') + '”');
+  }
+
+  function newSong() {
+    // Save current first (if it has content)
+    autoSaveCurrent();
+    // Then clear everything for a new song
+    suppressAutoSave = true;
+    library.currentId = null;
+    els.songTitle.value = '';
+    els.originalKey.value = '';
+    els.lyricsInput.value = '';
+    transposeSteps = 0;
+    els.youtubeUrl.value = '';
+    originalText = '';
+    // Reset video
+    currentVideoId = null;
+    if (els.videoContainer) {
+      els.videoContainer.innerHTML =
+        '<div class="yt-placeholder" id="videoPlaceholder">' +
+          '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>' +
+          '<div>Paste a YouTube link to start</div>' +
+        '</div>';
+    }
+    persistLibrary();
+    renderOutput();
+    recomputeStep();
+    suppressAutoSave = false;
+    closeSongsMenu();
+    els.youtubeUrl.focus();
+  }
+
+  function deleteSong(id, ev) {
+    if (ev) ev.stopPropagation();
+    const s = library.songs[id];
+    if (!s) return;
+    if (!confirm('Delete “' + (s.title || 'Untitled') + '”?')) return;
+    delete library.songs[id];
+    if (library.currentId === id) {
+      // Load next most recent, or start fresh
+      const remaining = Object.values(library.songs).sort((a, b) => b.updatedAt - a.updatedAt);
+      if (remaining.length) loadSong(remaining[0].id);
+      else newSong();
+    }
+    persistLibrary();
+    renderSongsList();
+  }
+
+  function fmtRelative(ts) {
+    const diff = Date.now() - ts;
+    if (diff < 60000) return 'just now';
+    if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
+    if (diff < 86400000) return Math.floor(diff / 3600000) + 'h ago';
+    if (diff < 604800000) return Math.floor(diff / 86400000) + 'd ago';
+    const d = new Date(ts);
+    return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  }
+
+  function renderSongsList() {
+    const list = Object.values(library.songs).sort((a, b) => b.updatedAt - a.updatedAt);
+    songsMenuEmpty.classList.toggle('hidden', list.length > 0);
+    songsMenuList.innerHTML = list.map(s => {
+      const title = (s.title || 'Untitled').replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'})[c]);
+      const meta = (s.key ? '<strong>' + s.key + '</strong> · ' : '') + fmtRelative(s.updatedAt);
+      const active = (s.id === library.currentId) ? ' active' : '';
+      return '' +
+        '<div class="songs-menu-item' + active + '" data-id="' + s.id + '">' +
+          '<div class="songs-menu-item-body">' +
+            '<div class="songs-menu-item-title">' + title + '</div>' +
+            '<div class="songs-menu-item-meta">' + meta + '</div>' +
+          '</div>' +
+          '<button class="songs-menu-item-delete" data-delete="' + s.id + '" aria-label="Delete">' +
+            '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg>' +
+          '</button>' +
+        '</div>';
+    }).join('');
+
+    // Bind
+    songsMenuList.querySelectorAll('[data-id]').forEach(el => {
+      el.addEventListener('click', (ev) => {
+        if (ev.target.closest('[data-delete]')) return; // delete handled separately
+        loadSong(el.dataset.id);
+      });
+    });
+    songsMenuList.querySelectorAll('[data-delete]').forEach(el => {
+      el.addEventListener('click', (ev) => deleteSong(el.dataset.delete, ev));
+    });
+  }
+
+  function openSongsMenu() {
+    renderSongsList();
+    songsMenu.classList.add('open');
+    songsBtn.setAttribute('aria-expanded', 'true');
+  }
+
+  function closeSongsMenu() {
+    songsMenu.classList.remove('open');
+    songsBtn.setAttribute('aria-expanded', 'false');
+  }
+
+  songsBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (songsMenu.classList.contains('open')) closeSongsMenu();
+    else openSongsMenu();
+  });
+
+  songsNewBtn.addEventListener('click', newSong);
+
+  // Close on outside click / escape
+  document.addEventListener('click', (e) => {
+    if (!songsMenu.contains(e.target) && !songsBtn.contains(e.target)) closeSongsMenu();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && songsMenu.classList.contains('open')) closeSongsMenu();
+  });
+
+  // Trigger auto-save on every meaningful change
+  els.songTitle.addEventListener('input', scheduleAutoSave);
+  els.originalKey.addEventListener('change', scheduleAutoSave);
+  els.youtubeUrl.addEventListener('change', scheduleAutoSave);
+  // Save when transpose changes too
+  ['click'].forEach(ev => {
+    els.transposeUp.addEventListener(ev, scheduleAutoSave);
+    els.transposeDown.addEventListener(ev, scheduleAutoSave);
+    els.resetTranspose.addEventListener(ev, scheduleAutoSave);
+  });
+
+  // Save right before the user leaves
+  window.addEventListener('beforeunload', autoSaveCurrent);
 
   // ─── Init ───
+  loadLibrary();
   renderOutput();
   setMode('transpose');
   loadFromHash();
   recomputeStep();
+
+  // If we have a saved current song and the URL didn't load one, restore it
+  if (library.currentId && library.songs[library.currentId] && !els.lyricsInput.value && !els.songTitle.value) {
+    loadSong(library.currentId);
+  }
 
   // Auto-focus the YouTube URL input on first load (gives a clear starting point)
   setTimeout(() => {
