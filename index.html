@@ -739,6 +739,104 @@
     }
 
     .output-view .chord { color: var(--chord-color); font-weight: 600; }
+
+    /* Individual chord tokens become hoverable when a shape is known */
+    .chord-token.known {
+      cursor: help;
+      border-bottom: 1px dotted var(--chord-color);
+      transition: background 0.15s;
+    }
+    .chord-token.known:hover { background: var(--primary-light); }
+
+    /* ── CHORD DIAGRAM POPOVER ── */
+    .chord-pop {
+      position: fixed;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 10px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      z-index: 350;
+      min-width: 84px;
+      pointer-events: auto;
+      font-family: var(--font-sans);
+    }
+
+    .chord-pop.visible {
+      display: flex;
+      animation: chordPopIn 0.18s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+
+    @keyframes chordPopIn {
+      from { opacity: 0; transform: translateY(2px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .chord-pop-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+
+    .chord-pop svg {
+      display: block;
+    }
+
+    .chord-pop .cp-string { stroke: var(--text-tertiary); stroke-width: 0.8; }
+    .chord-pop .cp-fret   { stroke: var(--text-tertiary); stroke-width: 0.6; }
+    .chord-pop .cp-nut    { stroke: var(--text); stroke-width: 1.8; }
+    .chord-pop .cp-dot    { fill: var(--text); }
+    .chord-pop .cp-finger { fill: #fff; font-size: 5.5px; font-weight: 700; }
+    .chord-pop .cp-open   { stroke: var(--text); fill: none; stroke-width: 0.8; }
+    .chord-pop .cp-mute   { stroke: var(--text-secondary); stroke-width: 0.9; fill: none; }
+    .chord-pop .cp-fret-label { fill: var(--text-secondary); font-size: 5.5px; font-weight: 600; }
+
+    [data-theme="dark"] .chord-pop .cp-dot { fill: var(--primary); }
+    [data-theme="dark"] .chord-pop .cp-string { stroke: #6e6e73; }
+    [data-theme="dark"] .chord-pop .cp-fret { stroke: #6e6e73; }
+
+    /* Instrument tabs in chord popover */
+    .chord-pop-tabs {
+      display: flex;
+      gap: 2px;
+      background: var(--bg);
+      border-radius: 5px;
+      padding: 2px;
+      margin-bottom: 2px;
+    }
+
+    .chord-pop-tab {
+      padding: 2px 8px;
+      border: none;
+      border-radius: 4px;
+      background: transparent;
+      font-size: 0.62rem;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text-tertiary);
+      transition: all var(--transition);
+      font-family: var(--font-sans);
+    }
+
+    .chord-pop-tab:hover { color: var(--text); }
+    .chord-pop-tab.active {
+      background: var(--surface-raised);
+      color: var(--text);
+      box-shadow: 0 0.5px 1px rgba(0,0,0,0.08);
+    }
+
+    /* Piano keys in SVG */
+    .chord-pop .cp-white-key { fill: #fff; stroke: var(--text-tertiary); stroke-width: 0.5; }
+    .chord-pop .cp-black-key { fill: #1d1d1f; stroke: none; }
+    .chord-pop .cp-key-active { fill: var(--primary); }
+    [data-theme="dark"] .chord-pop .cp-white-key { fill: #e5e5ea; stroke: #636366; }
+    [data-theme="dark"] .chord-pop .cp-black-key { fill: #2c2c2e; stroke: #636366; stroke-width: 0.3; }
+    [data-theme="dark"] .chord-pop .cp-key-active { fill: var(--primary); }
     .output-view .section {
       color: var(--section-color);
       font-weight: 700;
@@ -1478,7 +1576,8 @@
     /* ── PRINT ── */
     @media print {
       body { background: #fff !important; color: #000 !important; }
-      .topbar, .transpose-strip, .panel-side, .action-bar, .editor-tabs, .toast, .pdf-topbar, .fullscreen-overlay, .step-bar, .paste-helper-bar, .ready-label, .completion-state, .app-footer, .key-confirm, .songs-menu, .loop-bar { display: none !important; }
+      .topbar, .transpose-strip, .panel-side, .action-bar, .editor-tabs, .toast, .pdf-topbar, .fullscreen-overlay, .step-bar, .paste-helper-bar, .ready-label, .completion-state, .app-footer, .key-confirm, .songs-menu, .loop-bar, .chord-pop { display: none !important; }
+      .chord-token { border-bottom: none !important; }
       .workspace { display: block !important; overflow: visible !important; }
       .panel-main { width: 100% !important; }
       .editor-pane { overflow: visible !important; }
@@ -1983,6 +2082,9 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
   </a>
 </div>
 
+<!-- Chord diagram popover — positioned dynamically near hovered chord -->
+<div class="chord-pop" id="chordPop" role="tooltip" aria-hidden="true"></div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1994,6 +2096,177 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
   const NOTES_FLAT  = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
   const ALL_KEYS = ['C','C#','Db','D','D#','Eb','E','F','F#','Gb','G','G#','Ab','A','A#','Bb','B'];
   const NASHVILLE = ['1','#1/b2','2','#2/b3','3','4','#4/b5','5','#5/b6','6','#6/b7','7'];
+
+  // ─── Chord shapes (guitar, standard tuning) ───
+  // Each entry: [E, A, D, G, B, e] from low to high string.
+  // -1 = muted (X), 0 = open (O), 1+ = fret number.
+  // Optional property "baseFret" shifts the diagram up the neck.
+  const CHORD_SHAPES = {
+    // Major (open)
+    'C':    [-1, 3, 2, 0, 1, 0],
+    'D':    [-1, -1, 0, 2, 3, 2],
+    'E':    [0, 2, 2, 1, 0, 0],
+    'F':    [1, 3, 3, 2, 1, 1],
+    'G':    [3, 2, 0, 0, 0, 3],
+    'A':    [-1, 0, 2, 2, 2, 0],
+    'B':    [-1, 2, 4, 4, 4, 2],
+    // Sharps/flats (barre)
+    'C#':   [-1, 4, 3, 1, 2, 1],
+    'Db':   [-1, 4, 3, 1, 2, 1],
+    'D#':   [-1, -1, 1, 3, 4, 3],
+    'Eb':   [-1, -1, 1, 3, 4, 3],
+    'F#':   [2, 4, 4, 3, 2, 2],
+    'Gb':   [2, 4, 4, 3, 2, 2],
+    'G#':   [4, 3, 1, 1, 1, 4],
+    'Ab':   [4, 3, 1, 1, 1, 4],
+    'A#':   [-1, 1, 3, 3, 3, 1],
+    'Bb':   [-1, 1, 3, 3, 3, 1],
+    // Minor
+    'Cm':   [-1, 3, 5, 5, 4, 3],
+    'C#m':  [-1, 4, 6, 6, 5, 4],
+    'Dbm':  [-1, 4, 6, 6, 5, 4],
+    'Dm':   [-1, -1, 0, 2, 3, 1],
+    'D#m':  [-1, -1, 1, 3, 4, 2],
+    'Ebm':  [-1, -1, 1, 3, 4, 2],
+    'Em':   [0, 2, 2, 0, 0, 0],
+    'Fm':   [1, 3, 3, 1, 1, 1],
+    'F#m':  [2, 4, 4, 2, 2, 2],
+    'Gbm':  [2, 4, 4, 2, 2, 2],
+    'Gm':   [3, 5, 5, 3, 3, 3],
+    'G#m':  [4, 6, 6, 4, 4, 4],
+    'Abm':  [4, 6, 6, 4, 4, 4],
+    'Am':   [-1, 0, 2, 2, 1, 0],
+    'A#m':  [-1, 1, 3, 3, 2, 1],
+    'Bbm':  [-1, 1, 3, 3, 2, 1],
+    'Bm':   [-1, 2, 4, 4, 3, 2],
+    // 7
+    'C7':   [-1, 3, 2, 3, 1, 0],
+    'D7':   [-1, -1, 0, 2, 1, 2],
+    'E7':   [0, 2, 0, 1, 0, 0],
+    'F7':   [1, 3, 1, 2, 1, 1],
+    'G7':   [3, 2, 0, 0, 0, 1],
+    'A7':   [-1, 0, 2, 0, 2, 0],
+    'B7':   [-1, 2, 1, 2, 0, 2],
+    // m7
+    'Cm7':  [-1, 3, 5, 3, 4, 3],
+    'Dm7':  [-1, -1, 0, 2, 1, 1],
+    'Em7':  [0, 2, 0, 0, 0, 0],
+    'Fm7':  [1, 3, 1, 1, 1, 1],
+    'Gm7':  [3, 5, 3, 3, 3, 3],
+    'Am7':  [-1, 0, 2, 0, 1, 0],
+    'Bm7':  [-1, 2, 4, 2, 3, 2],
+    'F#m7': [2, 4, 2, 2, 2, 2],
+    'C#m7': [-1, 4, 6, 4, 5, 4],
+    // maj7
+    'Cmaj7':  [-1, 3, 2, 0, 0, 0],
+    'Dmaj7':  [-1, -1, 0, 2, 2, 2],
+    'Emaj7':  [0, 2, 1, 1, 0, 0],
+    'Fmaj7':  [-1, -1, 3, 2, 1, 0],
+    'Gmaj7':  [3, 2, 0, 0, 0, 2],
+    'Amaj7':  [-1, 0, 2, 1, 2, 0],
+    'Bmaj7':  [-1, 2, 4, 3, 4, -1],
+    // sus
+    'Asus2':  [-1, 0, 2, 2, 0, 0],
+    'Asus4':  [-1, 0, 2, 2, 3, 0],
+    'Dsus2':  [-1, -1, 0, 2, 3, 0],
+    'Dsus4':  [-1, -1, 0, 2, 3, 3],
+    'Esus2':  [0, 2, 4, 4, 0, 0],
+    'Esus4':  [0, 2, 2, 2, 0, 0],
+    'Gsus4':  [3, 3, 0, 0, 1, 3],
+    'Csus2':  [-1, 3, 0, 0, 1, 0],
+    'Csus4':  [-1, 3, 3, 0, 1, 1],
+    // Slash
+    'G/B':    [-1, 2, 0, 0, 0, 3],
+    'G/D':    [-1, -1, 0, 0, 0, 3],
+    'D/F#':   [2, 0, 0, 2, 3, 2],
+    'C/E':    [0, 3, 2, 0, 1, 0],
+    'C/G':    [3, 3, 2, 0, 1, 0],
+    'A/C#':   [-1, 4, 2, 2, 2, 0],
+    'E/G#':   [4, 2, 2, 1, 0, 0],
+    'Am/C':   [-1, 3, 2, 2, 1, 0],
+    // Add9 (popular in worship)
+    'Cadd9':  [-1, 3, 2, 0, 3, 0],
+    'Dadd9':  [-1, -1, 0, 2, 3, 0],
+    'Gadd9':  [3, 0, 0, 0, 0, 3],
+    'Aadd9':  [-1, 0, 2, 4, 2, 0],
+    'Eadd9':  [0, 2, 4, 1, 0, 0],
+  };
+
+  // ─── Ukulele chord shapes (GCEA tuning) ───
+  // [G, C, E, A] from top to bottom string.
+  // -1 = muted, 0 = open, 1+ = fret
+  const UKE_SHAPES = {
+    'C': [0,0,0,3], 'D': [2,2,2,0], 'E': [1,4,0,2], 'F': [2,0,1,0],
+    'G': [0,2,3,2], 'A': [2,1,0,0], 'B': [4,3,2,2],
+    'C#': [1,1,1,4], 'Db': [1,1,1,4], 'D#': [0,3,3,1], 'Eb': [0,3,3,1],
+    'F#': [3,1,2,1], 'Gb': [3,1,2,1], 'G#': [5,3,4,3], 'Ab': [5,3,4,3],
+    'A#': [3,2,1,1], 'Bb': [3,2,1,1],
+    'Cm': [0,3,3,3], 'Dm': [2,2,1,0], 'Em': [0,4,3,2], 'Fm': [1,0,1,3],
+    'Gm': [0,2,3,1], 'Am': [2,0,0,0], 'Bm': [4,2,2,2],
+    'C#m': [1,1,0,4], 'Dbm': [1,1,0,4], 'F#m': [2,1,2,0], 'Gbm': [2,1,2,0],
+    'Bbm': [3,1,1,1], 'A#m': [3,1,1,1], 'Ebm': [3,3,2,1], 'D#m': [3,3,2,1],
+    'G#m': [4,3,4,2], 'Abm': [4,3,4,2],
+    'C7': [0,0,0,1], 'D7': [2,2,2,3], 'E7': [1,2,0,2], 'F7': [2,3,1,3],
+    'G7': [0,2,1,2], 'A7': [0,1,0,0], 'B7': [2,3,2,2],
+    'Am7': [0,0,0,0], 'Dm7': [2,2,1,3], 'Em7': [0,2,0,2],
+    'Cmaj7': [0,0,0,2], 'Gmaj7': [0,2,2,2], 'Amaj7': [1,1,0,0],
+    'Asus2': [2,4,0,0], 'Asus4': [2,2,0,0], 'Dsus2': [2,2,0,0],
+    'Dsus4': [0,2,3,0], 'Gsus4': [0,2,3,3],
+    'G/B': [0,2,3,2], 'D/F#': [2,2,2,0], 'C/E': [0,0,0,3],
+    'Cadd9': [0,2,0,3],
+  };
+
+  // ─── Piano: chord → array of semitone offsets from C ───
+  // C=0, C#=1, D=2, Db=1, ... B=11
+  // Each chord maps to an array of MIDI-style note positions (semitones from C4)
+  // We compute these from root + intervals at runtime.
+  const PIANO_INTERVALS = {
+    '':      [0, 4, 7],        // major
+    'm':     [0, 3, 7],        // minor
+    '7':     [0, 4, 7, 10],    // dominant 7
+    'm7':    [0, 3, 7, 10],    // minor 7
+    'maj7':  [0, 4, 7, 11],    // major 7
+    'dim':   [0, 3, 6],        // diminished
+    'aug':   [0, 4, 8],        // augmented
+    'sus2':  [0, 2, 7],        // sus2
+    'sus4':  [0, 5, 7],        // sus4
+    'add9':  [0, 4, 7, 14],    // add9
+    '5':     [0, 7],           // power chord
+    '6':     [0, 4, 7, 9],     // 6th
+    'm6':    [0, 3, 7, 9],     // minor 6th
+    '9':     [0, 4, 7, 10, 14],// 9
+    'dim7':  [0, 3, 6, 9],     // dim7
+    'min':   [0, 3, 7],        // alias for m
+    'maj':   [0, 4, 7],        // alias for major
+  };
+
+  function pianoNotesForChord(name) {
+    if (!name) return null;
+    // Parse root and quality
+    const m = name.match(/^([A-G][#b]?)(m(?:aj|in)?|dim|aug|sus|add|dom)?(\d+)?(?:maj(\d+))?(\/[A-G][#b]?)?$/);
+    if (!m) return null;
+    const root = m[1];
+    let quality = (m[2] || '') + (m[3] || '');
+    if (m[4]) quality = 'maj' + m[4]; // e.g., Cmaj7
+
+    // Map quality to interval set
+    let intervals = PIANO_INTERVALS[quality];
+    if (!intervals) {
+      // Try shorter matches: e.g., "sus4" → "sus4", "add9" → "add9"
+      for (const key of Object.keys(PIANO_INTERVALS)) {
+        if (quality.startsWith(key) && key.length > 0) { intervals = PIANO_INTERVALS[key]; break; }
+      }
+    }
+    if (!intervals) intervals = PIANO_INTERVALS['']; // default to major
+
+    const NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+    const FLATS = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+    let rootIdx = NOTES.indexOf(root);
+    if (rootIdx === -1) rootIdx = FLATS.indexOf(root);
+    if (rootIdx === -1) return null;
+
+    return intervals.map(i => (rootIdx + i) % 12);
+  }
 
   // ─── State ───
   let transposeSteps = 0;
@@ -2169,6 +2442,143 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
     }
   }
 
+  // ═══════════════════
+  //  CHORD DIAGRAMS
+  // ═══════════════════
+
+  // Look up a chord shape in any dictionary, with enharmonic fallback
+  function lookupInDict(name, dict) {
+    if (!name || !dict) return null;
+    if (dict[name]) return dict[name];
+    const rm = name.match(/^([A-G])([#b]?)(.*)$/);
+    if (!rm) return null;
+    const [, letter, acc, rest] = rm;
+    if (!acc) return null;
+    const SHARP = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+    const FLAT  = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+    const idx = (acc === '#' ? SHARP : FLAT).indexOf(letter + acc);
+    if (idx >= 0) {
+      const alt = (acc === '#' ? FLAT : SHARP)[idx] + rest;
+      if (dict[alt]) return dict[alt];
+    }
+    return null;
+  }
+
+  // Can we show ANY diagram for this chord? (determines the dotted underline)
+  function lookupChord(name) {
+    return lookupInDict(name, CHORD_SHAPES) || lookupInDict(name, UKE_SHAPES) || pianoNotesForChord(name);
+  }
+
+  // Render a fretboard diagram (shared by guitar + uke)
+  function renderFretboard(shape, numStrings) {
+    const frettedNotes = shape.filter(f => f > 0);
+    const maxFret = Math.max(...(frettedNotes.length ? frettedNotes : [0]));
+    const minFret = Math.min(...(frettedNotes.length ? frettedNotes : [0]));
+    let baseFret = 1;
+    if (maxFret > 4) baseFret = minFret;
+
+    const W = numStrings === 4 ? 44 : 60;
+    const H = 70;
+    const padX = 8, padTop = 14, padBottom = 6;
+    const frets = 5;
+    const stringGap = (W - padX * 2) / (numStrings - 1);
+    const fretGap = (H - padTop - padBottom) / frets;
+    const svgW = numStrings === 4 ? 52 : 70;
+
+    const p = [];
+    for (let s = 0; s < numStrings; s++) {
+      const x = padX + s * stringGap;
+      p.push('<line class="cp-string" x1="'+x+'" y1="'+padTop+'" x2="'+x+'" y2="'+(H-padBottom)+'"/>');
+    }
+    for (let f = 0; f <= frets; f++) {
+      const y = padTop + f * fretGap;
+      const cls = (f === 0 && baseFret === 1) ? 'cp-nut' : 'cp-fret';
+      p.push('<line class="'+cls+'" x1="'+padX+'" y1="'+y+'" x2="'+(W-padX)+'" y2="'+y+'"/>');
+    }
+    if (baseFret > 1) {
+      p.push('<text class="cp-fret-label" x="'+(padX-3)+'" y="'+(padTop+fretGap/2+2)+'" text-anchor="end">'+baseFret+'fr</text>');
+    }
+    for (let s = 0; s < numStrings; s++) {
+      const fret = shape[s];
+      const x = padX + s * stringGap;
+      if (fret === -1) {
+        const y = padTop - 6;
+        p.push('<line class="cp-mute" x1="'+(x-2.2)+'" y1="'+(y-2.2)+'" x2="'+(x+2.2)+'" y2="'+(y+2.2)+'"/>');
+        p.push('<line class="cp-mute" x1="'+(x-2.2)+'" y1="'+(y+2.2)+'" x2="'+(x+2.2)+'" y2="'+(y-2.2)+'"/>');
+      } else if (fret === 0) {
+        p.push('<circle class="cp-open" cx="'+x+'" cy="'+(padTop-6)+'" r="2.3"/>');
+      } else {
+        const rel = fret - baseFret + 1;
+        if (rel >= 1 && rel <= frets) {
+          const y = padTop + (rel - 0.5) * fretGap;
+          p.push('<circle class="cp-dot" cx="'+x+'" cy="'+y+'" r="3"/>');
+        }
+      }
+    }
+    return '<svg viewBox="0 0 '+W+' '+H+'" width="'+svgW+'" height="82" aria-hidden="true">' + p.join('') + '</svg>';
+  }
+
+  // Render a piano keyboard showing active keys
+  function renderPianoDiagram(noteIndices) {
+    if (!noteIndices || !noteIndices.length) return '';
+    // Draw 15 white keys (C4 to E5 — two octaves minus some, enough to see any chord)
+    // White keys: C D E F G A B  (indices 0,2,4,5,7,9,11 in a 12-note cycle)
+    const W = 105, H = 52;
+    const whiteW = 7, blackW = 4.5, blackH = 30, whiteH = 48;
+    const whiteNotes = [0,2,4,5,7,9,11]; // C D E F G A B semitone offsets
+    const blackNotes = [1,3,6,8,10];      // C# D# F# G# A#
+    const blackPos = [0.7,1.7,3.7,4.7,5.7]; // position in white-key units
+
+    const activeSet = new Set(noteIndices.map(n => n % 12));
+    const p = [];
+
+    // 15 white keys = two octaves (C-B, C-B, C)
+    const totalWhites = 15;
+    for (let i = 0; i < totalWhites; i++) {
+      const octIdx = i % 7;
+      const semitone = whiteNotes[octIdx];
+      const octave = Math.floor(i / 7);
+      const absSemitone = (semitone + octave * 12) % 12;
+      const x = i * whiteW;
+      const isActive = activeSet.has(absSemitone);
+      p.push('<rect class="cp-white-key' + (isActive ? ' cp-key-active' : '') + '" x="'+x+'" y="0" width="'+(whiteW-0.5)+'" height="'+whiteH+'" rx="0.8"/>');
+    }
+
+    // Black keys
+    for (let oct = 0; oct < 2; oct++) {
+      for (let b = 0; b < blackPos.length; b++) {
+        const x = (blackPos[b] + oct * 7) * whiteW - blackW / 2 + whiteW * 0.5;
+        if (x > totalWhites * whiteW - blackW) continue;
+        const semitone = blackNotes[b];
+        const isActive = activeSet.has(semitone);
+        p.push('<rect class="cp-black-key' + (isActive ? ' cp-key-active' : '') + '" x="'+x.toFixed(1)+'" y="0" width="'+blackW+'" height="'+blackH+'" rx="0.6"/>');
+      }
+    }
+
+    return '<svg viewBox="0 0 '+W+' '+H+'" width="'+W+'" height="'+H+'" aria-hidden="true">' + p.join('') + '</svg>';
+  }
+
+  // Master render — picks the right renderer based on current instrument
+  let chordInstrument = 'guitar';
+  try { const saved = localStorage.getItem('songprep-instrument'); if (saved) chordInstrument = saved; } catch(e) {}
+
+  function renderChordDiagram(name, instrument) {
+    const inst = instrument || chordInstrument;
+    if (inst === 'guitar') {
+      const shape = lookupInDict(name, CHORD_SHAPES);
+      return shape ? renderFretboard(shape, 6) : '';
+    }
+    if (inst === 'uke') {
+      const shape = lookupInDict(name, UKE_SHAPES);
+      return shape ? renderFretboard(shape, 4) : '';
+    }
+    if (inst === 'piano') {
+      const notes = pianoNotesForChord(name);
+      return notes ? renderPianoDiagram(notes) : '';
+    }
+    return '';
+  }
+
   // ─── Render ───
   function renderOutput() {
     originalText = els.lyricsInput.value;
@@ -2211,8 +2621,16 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
         let displayLine = escaped;
         if (nashvilleMode) {
           displayLine = escapeHtml(nashvilleLine(line, currentKey));
+          htmlParts.push('<span class="chord">' + displayLine + '</span>');
+        } else {
+          // Wrap each individual chord token so it can show a diagram on hover
+          const TOKEN_RE = /([A-G][#b]?(?:m|min|maj|dim|aug|sus|add|dom)?(?:2|3|4|5|6|7|9|11|13)?(?:maj[79])?(?:\/[A-G][#b]?)?)/g;
+          const wrapped = displayLine.replace(TOKEN_RE, (m) => {
+            const known = !!lookupChord(m);
+            return '<span class="chord-token' + (known ? ' known' : '') + '" data-chord="' + m + '">' + m + '</span>';
+          });
+          htmlParts.push('<span class="chord">' + wrapped + '</span>');
         }
-        htmlParts.push('<span class="chord">' + displayLine + '</span>');
       } else {
         htmlParts.push(escaped);
       }
@@ -2233,6 +2651,138 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
     els.printTitle.textContent = els.songTitle.value || 'Untitled';
     els.printKey.textContent = 'Key: ' + currentKey + (transposeSteps !== 0 ? ' (' + sign + transposeSteps + ')' : '');
   }
+
+  // ═══════════════════
+  //  CHORD POPOVER (hover on desktop, tap on touch)
+  // ═══════════════════
+
+  const chordPop = document.getElementById('chordPop');
+  let chordPopTarget = null;
+  let chordPopHideTimer = null;
+
+  let chordPopCurrentName = '';
+
+  function buildPopContent(name) {
+    const esc = name.replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'})[c]);
+    const tabs =
+      '<div class="chord-pop-tabs">' +
+        '<button class="chord-pop-tab' + (chordInstrument === 'guitar' ? ' active' : '') + '" data-inst="guitar">Guitar</button>' +
+        '<button class="chord-pop-tab' + (chordInstrument === 'uke' ? ' active' : '') + '" data-inst="uke">Uke</button>' +
+        '<button class="chord-pop-tab' + (chordInstrument === 'piano' ? ' active' : '') + '" data-inst="piano">Piano</button>' +
+      '</div>';
+    const svg = renderChordDiagram(name, chordInstrument);
+    const fallback = svg ? '' : '<div style="font-size:0.68rem;color:var(--text-tertiary);padding:8px 0;">No shape available</div>';
+    return '<div class="chord-pop-name">' + esc + '</div>' + tabs + (svg || fallback);
+  }
+
+  function showChordPop(tokenEl) {
+    const name = tokenEl.dataset.chord;
+    clearTimeout(chordPopHideTimer);
+    chordPopCurrentName = name;
+    chordPop.innerHTML = buildPopContent(name);
+    chordPop.classList.add('visible');
+    chordPop.setAttribute('aria-hidden', 'false');
+    chordPopTarget = tokenEl;
+    positionChordPop(tokenEl);
+
+    // Bind tab clicks inside the popover
+    chordPop.querySelectorAll('.chord-pop-tab').forEach(tab => {
+      tab.addEventListener('click', (e) => {
+        e.stopPropagation();
+        chordInstrument = tab.dataset.inst;
+        try { localStorage.setItem('songprep-instrument', chordInstrument); } catch(e) {}
+        chordPop.innerHTML = buildPopContent(chordPopCurrentName);
+        positionChordPop(chordPopTarget);
+        // Re-bind tabs (fresh HTML)
+        chordPop.querySelectorAll('.chord-pop-tab').forEach(t2 => {
+          t2.addEventListener('click', function handler(ev) {
+            ev.stopPropagation();
+            chordInstrument = this.dataset.inst;
+            try { localStorage.setItem('songprep-instrument', chordInstrument); } catch(e) {}
+            chordPop.innerHTML = buildPopContent(chordPopCurrentName);
+            positionChordPop(chordPopTarget);
+            bindPopTabs();
+          });
+        });
+      });
+    });
+  }
+
+  function bindPopTabs() {
+    chordPop.querySelectorAll('.chord-pop-tab').forEach(tab => {
+      tab.addEventListener('click', (e) => {
+        e.stopPropagation();
+        chordInstrument = tab.dataset.inst;
+        try { localStorage.setItem('songprep-instrument', chordInstrument); } catch(e) {}
+        chordPop.innerHTML = buildPopContent(chordPopCurrentName);
+        positionChordPop(chordPopTarget);
+        bindPopTabs();
+      });
+    });
+  }
+
+  function hideChordPop() {
+    chordPop.classList.remove('visible');
+    chordPop.setAttribute('aria-hidden', 'true');
+    chordPopTarget = null;
+  }
+
+  function positionChordPop(tokenEl) {
+    const r = tokenEl.getBoundingClientRect();
+    const pr = chordPop.getBoundingClientRect();
+    // Default: below and centered on the token
+    let left = r.left + r.width / 2 - pr.width / 2;
+    let top = r.bottom + 8;
+    // Flip above if overflow at bottom
+    if (top + pr.height > window.innerHeight - 8) top = r.top - pr.height - 8;
+    // Clamp horizontally
+    const margin = 8;
+    left = Math.max(margin, Math.min(left, window.innerWidth - pr.width - margin));
+    chordPop.style.left = left + 'px';
+    chordPop.style.top = top + 'px';
+  }
+
+  // Delegate on the preview + fullscreen areas
+  function bindChordPop(container) {
+    if (!container) return;
+    container.addEventListener('mouseover', (e) => {
+      const t = e.target.closest('.chord-token.known');
+      if (t) showChordPop(t);
+    });
+    container.addEventListener('mouseout', (e) => {
+      const t = e.target.closest('.chord-token.known');
+      if (t && !chordPop.contains(e.relatedTarget)) {
+        chordPopHideTimer = setTimeout(hideChordPop, 120);
+      }
+    });
+    // Mobile: tap toggles
+    container.addEventListener('click', (e) => {
+      const t = e.target.closest('.chord-token.known');
+      if (!t) return;
+      if (chordPopTarget === t) hideChordPop();
+      else showChordPop(t);
+    });
+  }
+
+  bindChordPop(document.getElementById('outputArea'));
+  bindChordPop(document.getElementById('fsContent'));
+
+  // Keep popover alive while cursor is on it
+  chordPop.addEventListener('mouseenter', () => clearTimeout(chordPopHideTimer));
+  chordPop.addEventListener('mouseleave', hideChordPop);
+
+  // Tap outside on mobile closes it
+  document.addEventListener('click', (e) => {
+    if (!chordPop.classList.contains('visible')) return;
+    if (chordPop.contains(e.target)) return;
+    if (e.target.closest('.chord-token.known')) return;
+    hideChordPop();
+  });
+
+  // Reposition if window resizes while open
+  window.addEventListener('resize', () => {
+    if (chordPopTarget) positionChordPop(chordPopTarget);
+  });
 
   // ═══════════════════
   //  MODE SWITCHING
@@ -2506,13 +3056,18 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
     els.fsKey.textContent = 'Key: ' + currentKey;
     els.fsBpm.textContent = bpm ? bpm + ' bpm' : '';
 
+    const TOKEN_RE = /([A-G][#b]?(?:m|min|maj|dim|aug|sus|add|dom)?(?:2|3|4|5|6|7|9|11|13)?(?:maj[79])?(?:\/[A-G][#b]?)?)/g;
     const lines = transposed.split('\n');
     els.fsContent.innerHTML = lines.map(line => {
       const escaped = escapeHtml(line);
       if (/^\[.*\]$/.test(line.trim())) return '<span class="section">' + escaped + '</span>';
       if (isChordLine(line)) {
         if (nashvilleMode) return '<span class="chord">' + escapeHtml(nashvilleLine(line, currentKey)) + '</span>';
-        return '<span class="chord">' + escaped + '</span>';
+        const wrapped = escaped.replace(TOKEN_RE, (m) => {
+          const known = !!lookupChord(m);
+          return '<span class="chord-token' + (known ? ' known' : '') + '" data-chord="' + m + '">' + m + '</span>';
+        });
+        return '<span class="chord">' + wrapped + '</span>';
       }
       return escaped;
     }).join('\n');
