@@ -840,12 +840,7 @@
     .output-view .section {
       color: var(--section-color);
       font-weight: 700;
-      cursor: pointer;
-      user-select: none;
     }
-
-    .output-view .section:hover { opacity: 0.7; }
-    .output-view .section-collapsed { display: none; }
 
     .action-bar {
       display: flex;
@@ -2274,7 +2269,6 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
   let appMode = 'transpose';
   let editorTab = 'edit';
   let nashvilleMode = false;
-  let collapsedSections = new Set();
   let bpm = 0;
   let tapTimes = [];
   let autoScrollId = null;
@@ -2604,16 +2598,7 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
       const escaped = escapeHtml(line);
 
       if (/^\[.*\]$/.test(line.trim())) {
-        currentSection = line.trim();
-        const isCollapsed = collapsedSections.has(currentSection);
-        const arrow = isCollapsed ? '&#9654;' : '&#9660;';
-        htmlParts.push('<span class="section" data-section="' + escapeHtml(currentSection) + '">' + arrow + ' ' + escaped + '</span>');
-        continue;
-      }
-
-      if (currentSection && collapsedSections.has(currentSection)) {
-        if (line.trim() === '') { currentSection = null; }
-        htmlParts.push('<span class="section-collapsed">' + escaped + '</span>');
+        htmlParts.push('<span class="section">' + escaped + '</span>');
         continue;
       }
 
@@ -2623,7 +2608,6 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
           displayLine = escapeHtml(nashvilleLine(line, currentKey));
           htmlParts.push('<span class="chord">' + displayLine + '</span>');
         } else {
-          // Wrap each individual chord token so it can show a diagram on hover
           const TOKEN_RE = /([A-G][#b]?(?:m|min|maj|dim|aug|sus|add|dom)?(?:2|3|4|5|6|7|9|11|13)?(?:maj[79])?(?:\/[A-G][#b]?)?)/g;
           const wrapped = displayLine.replace(TOKEN_RE, (m) => {
             const known = !!lookupChord(m);
@@ -2637,16 +2621,6 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
     }
 
     els.outputArea.innerHTML = htmlParts.join('\n');
-
-    // Bind section click handlers
-    els.outputArea.querySelectorAll('.section').forEach(el => {
-      el.addEventListener('click', () => {
-        const sec = el.dataset.section;
-        if (collapsedSections.has(sec)) collapsedSections.delete(sec);
-        else collapsedSections.add(sec);
-        renderOutput();
-      });
-    });
 
     els.printTitle.textContent = els.songTitle.value || 'Untitled';
     els.printKey.textContent = 'Key: ' + currentKey + (transposeSteps !== 0 ? ' (' + sign + transposeSteps + ')' : '');
