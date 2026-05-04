@@ -9,54 +9,122 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    /* ═══════════════════════════════════════════════════════════════════
+       ARSHIP DESIGN SYSTEM TOKENS
+       Mirrors lib/core/constants/app_constants.dart so Prep feels native
+       to the Arship family. Brand carried by color + curvature + motion.
+       ═══════════════════════════════════════════════════════════════════ */
     :root {
-      --bg: #f5f5f7;
-      --surface: #ffffff;
-      --surface-alt: #fafafa;
-      --surface-raised: #ffffff;
-      --border: #e5e5ea;
-      --border-focus: #ff6f00;
+      /* Surfaces — light */
+      --bg: #F2F2F7;                    /* iOS systemGray6 */
+      --surface: #FFFFFF;
+      --surface-alt: #F9F9FB;
+      --surface-raised: #FFFFFF;
+      --card: rgba(0,0,0,0.025);
+      --border: #E5E5EA;
+      --hairline: rgba(0,0,0,0.06);
+      --divider: rgba(0,0,0,0.04);
+
+      /* Brand */
+      --primary: #FF6F00;               /* Arship orange */
+      --primary-hover: #FF8424;
+      --primary-light: rgba(255, 111, 0, 0.10);
+      --primary-tint: rgba(255, 111, 0, 0.18);   /* peach key-pill tint */
+      --secondary-peach: #FFCCAF;       /* secondary brand */
+
+      /* Status palette */
+      --st-orange: #FF6F00;             /* Practicing */
+      --st-warning: #FF9500;            /* In Progress */
+      --st-success: #34C759;            /* Ready */
+      --st-info: #007AFF;               /* iOS blue */
+      --st-error: #FF3B30;
+      --st-gray: #8E8E93;               /* Not Started */
+
+      /* Voice-part jewel tones (used as section accents) */
+      --jewel-rose: #F2A8A0;
+      --jewel-amethyst: #C9B0E8;
+      --jewel-gold: #E8C66B;
+      --jewel-jade: #6BCFA8;
+      --jewel-copper: #D49A6A;
+      --jewel-sea: #94CFD0;
+      --jewel-twilight: #9C9CE0;
+
+      /* Text */
       --text: #1d1d1f;
       --text-secondary: #6e6e73;
       --text-tertiary: #aeaeb2;
-      --primary: #ff6f00;
-      --primary-hover: #ff8424;
-      --primary-light: rgba(255, 111, 0, 0.1);
-      --accent: #1e293b;
-      --accent-light: rgba(30, 41, 59, 0.08);
-      --chord-color: #ff6f00;
-      --section-color: #1e293b;
-      --radius: 12px;
-      --radius-sm: 8px;
-      --radius-xs: 6px;
+      --border-focus: #FF6F00;
+
+      /* Semantic colors used in render */
+      --accent: var(--jewel-twilight);  /* Section labels — quiet purple-gray */
+      --accent-light: rgba(156, 156, 224, 0.10);
+      --chord-color: #FF6F00;
+      --section-color: var(--text);
+
+      /* Radii — Arship hierarchy (4pt grid) */
+      --r-input: 10px;
+      --r-button: 12px;
+      --r-card-sm: 14px;
+      --r-card: 20px;                   /* Superellipse (signature) */
+      --r-pill: 26px;                   /* Primary pill button */
+      --r-sheet: 28px;                  /* Bottom sheets / modals */
+      --r-chip: 14px;                   /* Status pills, key chip */
+      --radius: var(--r-card-sm);       /* legacy */
+      --radius-sm: 10px;                /* legacy */
+      --radius-xs: 8px;                 /* legacy */
+
+      /* Spacing — strict 4pt grid: XS 4 · SM 8 · MD 16 · LG 20 · XL 24 · XXL 32 */
+      --sp-xs: 4px; --sp-sm: 8px; --sp-md: 16px; --sp-lg: 20px; --sp-xl: 24px; --sp-xxl: 32px;
+
+      /* Shadows reserved for state expression — never grey/depth in light mode */
       --shadow-sm: 0 0.5px 1px rgba(0,0,0,0.04);
       --shadow: 0 1px 4px rgba(0,0,0,0.06), 0 0.5px 1px rgba(0,0,0,0.04);
-      --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
-      --transition: 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+      --shadow-md: 0 8px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+
+      /* Motion vocabulary */
+      --t-short: 200ms;
+      --t-med:   300ms;
+      --t-long:  500ms;
+      --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);     /* iOS spring-out */
+      --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1);   /* easeOutBack */
+      --ease-quart: cubic-bezier(0.25, 1, 0.5, 1);      /* easeOutQuart */
+      --ease-expo: cubic-bezier(0.19, 1, 0.22, 1);      /* easeOutExpo */
+      --transition: 0.2s var(--ease-quart);
+
       --font-mono: 'SF Mono', 'Fira Code', 'Consolas', 'Monaco', 'Menlo', monospace;
       --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', 'Segoe UI', system-ui, sans-serif;
     }
 
     [data-theme="dark"] {
-      --bg: #1c1c1e;
-      --surface: #2c2c2e;
-      --surface-alt: #252528;
-      --surface-raised: #3a3a3c;
-      --border: #38383a;
-      --border-focus: #ff8c33;
-      --text: #f5f5f7;
-      --text-secondary: #98989d;
+      /* Pure OLED black — Arship signature, do NOT soften to grey */
+      --bg: #000000;
+      --surface: #1C1C1E;
+      --surface-alt: #1C1C1E;
+      --surface-raised: #2C2C2E;
+      --card: rgba(255,255,255,0.025);
+      --border: rgba(255,255,255,0.06);
+      --hairline: rgba(255,255,255,0.06);
+      --divider: rgba(255,255,255,0.04);
+
+      --text: #FFFFFF;
+      --text-secondary: #8E8E93;
       --text-tertiary: #636366;
-      --primary: #ff8c33;
-      --primary-hover: #ffa050;
-      --primary-light: rgba(255, 140, 51, 0.15);
-      --accent: #94a3b8;
-      --accent-light: rgba(148, 163, 184, 0.12);
-      --chord-color: #ff8c33;
-      --section-color: #94a3b8;
-      --shadow-sm: 0 0.5px 1px rgba(0,0,0,0.2);
-      --shadow: 0 1px 4px rgba(0,0,0,0.3);
-      --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+      --border-focus: #FF6F00;
+
+      /* Primary stays warm orange — same hue across themes per design system */
+      --primary: #FF6F00;
+      --primary-hover: #FF8424;
+      --primary-light: rgba(255, 111, 0, 0.14);
+      --primary-tint: rgba(255, 111, 0, 0.18);
+
+      --accent: var(--jewel-twilight);
+      --accent-light: rgba(156, 156, 224, 0.14);
+      --chord-color: #FF8424;
+      --section-color: #FFFFFF;
+
+      --shadow-sm: 0 0.5px 1px rgba(0,0,0,0.3);
+      --shadow: 0 1px 4px rgba(0,0,0,0.4);
+      --shadow-md: 0 10px 30px rgba(0,0,0,0.5);
     }
 
     html { height: 100%; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
@@ -144,6 +212,7 @@
       width: 200px;
       font-family: var(--font-sans);
     }
+    .topbar-input.topbar-input-sm { width: 140px; }
 
     .topbar-input:focus {
       outline: none;
@@ -467,6 +536,16 @@
 
     .songs-menu-empty.hidden { display: none; }
 
+    /* Local-first storage note — calm, factual */
+    .songs-menu-foot {
+      padding: 9px 12px;
+      border-top: 0.5px solid var(--hairline);
+      font-size: 0.65rem;
+      color: var(--text-tertiary);
+      line-height: 1.45;
+      letter-spacing: 0;
+    }
+
     /* ── MODE TABS ── */
     .mode-tabs {
       display: flex;
@@ -707,6 +786,8 @@
     }
 
     .editor-pane { flex: 1; overflow-y: auto; min-height: 0; }
+    /* Preview pane gets a subtle workspace background so the white paper "floats" */
+    #previewPane { background: var(--bg); }
 
     textarea.lyrics-editor {
       width: 100%;
@@ -730,15 +811,515 @@
 
     .output-view {
       padding: 20px 24px;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ── SONG ROADMAP (top strip) — readable, calm ──
+       Reads naturally: "Intro · Verse 1 · Chorus · Bridge · Ending" */
+    /* Song roadmap — a deliberate "song map" strip, contained as one
+       designed element rather than free-floating text between dividers. */
+    .song-nav {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 12px;
+      padding: 10px 14px;
+      background: var(--surface-alt);
+      border: 0.5px solid var(--hairline);
+      border-radius: 12px;
+      margin: 0 0 18px 0;
+      font-family: var(--font-sans);
+    }
+    .nav-step {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      letter-spacing: 0.005em;
+      transition: color var(--t-short) var(--ease-quart);
+    }
+    .nav-sep {
+      color: var(--text-tertiary);
+      font-weight: 400;
+      opacity: 0.55;
+    }
+    /* Subtle accent to mark structural emphasis without shouting */
+    .nav-step[data-type="chorus"],
+    .nav-step[data-type="bridge"],
+    .nav-step[data-type="tag"],
+    .nav-step[data-type="vamp"],
+    .nav-step[data-type="refrain"],
+    .nav-step[data-type="hook"] {
+      color: var(--text);
+    }
+    .nav-step[data-type="chorus"],
+    .nav-step[data-type="bridge"] {
+      color: var(--primary);
+    }
+    .nav-repeat {
+      font-size: 0.64rem;
+      font-weight: 600;
+      opacity: 0.55;
+      margin-left: 2px;
+    }
+
+    /* ── SECTION CARDS — Arship-calm boxes ──
+       Subtle background, hairline border, soft corners. Emphasis sections
+       (Chorus, Bridge, Tag) carry a colored left-edge accent so the eye
+       finds structural weight at a glance — without heavy chips or fills. */
+    .section-card {
+      background: var(--card);
+      border: 0.5px solid var(--hairline);
+      border-radius: var(--r-card-sm);   /* 14dp */
+      padding: 12px 20px 14px 20px;      /* generous horizontal breathing room */
+      margin: 0 0 20px 0;
+      /* Allow tall cards to flow gracefully — preserves all sections in print
+         instead of orphaning Bridge/Interlude on a near-empty page 2 */
+      break-inside: auto;
+      page-break-inside: auto;
+      position: relative;
+      overflow: visible;                 /* never clip — chord positions sit above */
+      transition: border-color var(--t-short) var(--ease-quart);
+    }
+    /* Color-coded left-edge accent for emphasis sections */
+    .section-card.is-emphasis,
+    .section-card.is-signature {
+      padding-left: 24px;             /* room for the stripe + breathing space */
+    }
+    .section-card.is-emphasis::before,
+    .section-card.is-signature::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--primary);
+      border-radius: 2px 0 0 2px;
+    }
+    .section-card.is-signature {
+      background: rgba(255, 111, 0, 0.04);
+    }
+
+    .sc-head {
+      display: flex;
+      align-items: baseline;
+      gap: var(--sp-sm);
+      margin-bottom: 8px;
+    }
+
+    .sc-name {
+      font-family: var(--font-sans);
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: -0.005em;
+      color: var(--text);
+    }
+    .section-card.is-signature .sc-name {
+      color: var(--primary);
+    }
+
+    /* Repeat indicator — quiet typographic ×N, no pill */
+    .sc-repeat {
+      display: inline-block;
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--primary);
+      letter-spacing: 0;
+      margin-left: 4px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       PAPER PREVIEW
+       Makes the on-screen Preview render exactly like the printed page.
+       Same paper background, two-column layout, typography, brand footer.
+       What you see here is what the print will produce.
+       ═══════════════════════════════════════════════════════════════════ */
+    .paper {
+      background: #fff;
+      color: #000;
+      max-width: 8.5in;
+      margin: 24px auto;
+      padding: 0.4in 0.5in 0.4in 0.5in;
+      border-radius: 4px;
+      box-shadow: 0 2px 14px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.04);
+      position: relative;
+      /* Natural growth: empty/short songs show a full sheet (min-height 11in);
+         longer songs grow downward into a single tall preview. We rely on
+         column-fill:balance to distribute content evenly, so we never spawn
+         a third column or an orphaned tiny "page 2". */
+      min-height: 11in;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Inside .paper everything is on white — overrides the dark/light theme
+       so the Preview always shows what will print, regardless of UI mode */
+    .paper, .paper * { color: #000 !important; }
+
+    /* The body grows to fill the remaining paper height between header and footer */
+    .paper .output-view { flex: 1; min-height: 0; }
+
+    /* Paper footer pinned to the bottom edge — frees up the body space above
+       it for the chart, especially important at A+ font scale */
+    .paper-foot {
+      margin-top: auto;             /* push to the bottom of the flex column */
+      padding-top: 10px;
+      border-top: 0.5px solid #d6d6d6;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 5px;
+      font-family: var(--font-sans);
+      font-size: 0.66rem;
+      color: #999 !important;
+      letter-spacing: 0.01em;
+      flex-shrink: 0;
+    }
+    .paper-foot .pf-name { color: #555 !important; font-weight: 700; }
+    .paper-foot .pf-sep { color: #ccc !important; }
+    .paper-foot .pf-tag { color: #888 !important; }
+    .paper-foot .pf-perm {
+      color: #aaa !important;
+      font-style: italic;
+      font-size: 0.62rem;
+    }
+
+    /* Two-column layout inside .paper. Balanced fill on screen so columns
+       distribute evenly and no content spills into a phantom 3rd column.
+       Print uses auto fill (browser-native pagination across pages). */
+    .paper .output-view {
+      column-count: 2;
+      column-gap: 0.45in;
+      column-fill: balance;
+      display: block;
+      gap: 0;
+      padding: 0;
+    }
+
+    /* Section cards inside .paper — match the print look */
+    .paper .section-card {
+      background: #fafafa !important;
+      border: 0.5px solid #d6d6d6 !important;
+      border-radius: 6px;
+      padding: 8px 14px 10px 14px;
+      margin: 4px 4px 12px 4px;
+      box-shadow: none;
+    }
+    .paper .section-card.is-emphasis,
+    .paper .section-card.is-signature {
+      padding-left: 16px;
+    }
+    .paper .section-card.is-emphasis::before,
+    .paper .section-card.is-signature::before {
+      width: 2.5px;
+      background: var(--primary) !important;
+    }
+    .paper .section-card.is-signature {
+      background: rgba(255, 111, 0, 0.05) !important;
+      border-color: rgba(255, 111, 0, 0.25) !important;
+    }
+    .paper .sc-name { color: #000 !important; font-size: calc(10.5pt * var(--print-scale, 1)); }
+    .paper .section-card.is-signature .sc-name { color: var(--primary) !important; }
+    .paper .sc-repeat { color: var(--primary) !important; background: transparent !important; }
+
+    /* Print-style chord/lyric typography inside .paper */
+    .paper .sc-body {
+      font-family: 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif !important;
+      font-size: calc(11pt * var(--print-scale, 1)) !important;
+      color: #000 !important;
+      line-height: 1.4;
+    }
+    .paper .lyr-line {
+      line-height: 1;
+      margin-bottom: 0.45em;
+      word-break: normal;
+      overflow-wrap: normal;
+      hyphens: manual;
+    }
+    .paper .lyr-blank { height: 0.4em; }
+    .paper .ch-above {
+      font-size: 0.78em;
+      color: #000 !important;
+      letter-spacing: -0.015em;
+    }
+    .paper .chord-row { padding: 0 0 0.3em 0; }
+    .paper .ch-only {
+      font-size: 0.92em;
+      color: #000 !important;
+      margin-right: 0.6em;
+    }
+    /* Hide hover underlines and dotted markers in the paper view (these are
+       UI affordances, not part of the printed chart) */
+    .paper .chord-token { border-bottom: none !important; }
+
+    /* Paper-side print header — Multitracks-quality hierarchy */
+    .paper #printHeader {
+      column-span: all;
+      display: flex !important;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 14px;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+      border-bottom: 0.5px solid #e2e2e2;
+    }
+    .paper #printHeader h2 {
+      font-size: calc(22pt * var(--print-scale, 1));
+      font-weight: 800;
+      color: #000 !important;
+      letter-spacing: -0.025em;
+      line-height: 1.02;
+      margin: 0;
+    }
+    .paper #printHeader .ph-artist {
+      font-size: calc(10pt * var(--print-scale, 1));
+      color: #6e6e73 !important;
+      margin: 3px 0 0 0;
+      font-weight: 500;
+    }
+    .paper #printHeader .ph-artist:empty { display: none; }
+    .paper #printHeader .meta-pill.key {
+      background: rgba(255, 111, 0, 0.12) !important;
+      color: var(--primary) !important;
+      border: 0.5px solid rgba(255, 111, 0, 0.28) !important;
+    }
+    .paper #printHeader .meta-pill.key * { color: var(--primary) !important; }
+    .paper #printHeader .meta-pill.gray {
+      background: rgba(0,0,0,0.04) !important;
+      color: #1d1d1f !important;
+      border: 0.5px solid rgba(0,0,0,0.08) !important;
+    }
+    .paper #printHeader .meta-pill.gray .pill-l { color: #6e6e73 !important; }
+
+    /* Roadmap inside paper — contained song-map strip */
+    .paper .song-nav {
+      column-span: all;
+      gap: 8px 12px;
+      background: #f5f5f7 !important;
+      border: 0.5px solid #d6d6d6 !important;
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin: 0 0 14px 0;
+    }
+    .paper .nav-step { color: #555 !important; }
+    .paper .nav-sep { color: #bbb !important; }
+    .paper .nav-step[data-type="chorus"],
+    .paper .nav-step[data-type="bridge"] { color: var(--primary) !important; }
+    .paper .nav-step[data-type="tag"],
+    .paper .nav-step[data-type="vamp"],
+    .paper .nav-step[data-type="refrain"],
+    .paper .nav-step[data-type="hook"] { color: #000 !important; font-weight: 700; }
+
+    /* Hide editor-only chrome inside paper view (Ready for rehearsal pill) */
+    .paper .ready-label { display: none; }
+
+    /* Don't render the on-screen paper when actually printing — print uses
+       its own @page rules and the paper-foot would print twice */
+    @media print {
+      .paper {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        max-width: none !important;
+        height: auto !important;       /* CRITICAL: drop the 11in screen-only paper height,
+                                          otherwise it forces a phantom 2nd page */
+        min-height: 0 !important;
+        display: block !important;     /* drop flex-column so content sizes naturally */
+        border-radius: 0 !important;
+      }
+      .paper .output-view { flex: none !important; }
+      .paper-foot { display: none !important; }
+    }
+
+    /* ── PRINT HEADER (also rendered on-screen in the Preview tab) ──
+       Arship-family hierarchy: big title + artist on left, metadata pills on right.
+       What you see in Preview is what prints. */
+    #printHeader {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 0.5px solid var(--hairline);
+    }
+    #printHeader .ph-left { flex: 1; min-width: 0; }
+    #printHeader .ph-right {
+      display: flex;
+      align-items: center;
+      gap: 32px;                   /* clear breathing room between chips */
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      flex-shrink: 0;
+      padding-bottom: 4px;
+    }
+    #printHeader h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.025em;
+      line-height: 1.05;
+      margin: 0;
+    }
+    #printHeader .ph-artist {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      margin: 4px 0 0 0;
+      font-weight: 500;
+      letter-spacing: 0.005em;
+    }
+    #printHeader .ph-artist:empty { display: none; }
+    /* The chips actually live inside this <p>, so the gap MUST be here
+       (not on .ph-right where there's only one child).
+       8px gap matches the Arship prototype's .meta-row exactly. */
+    #printHeader p {
+      margin: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    /* Arship metadata chips — exact match to the app prototype:
+       11px text, 14px radius, 4px×10px padding, gap 4px inside,
+       breathing room between chips comes from the parent container. */
+    .meta-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 14px;
+      font-size: 11px;
+      font-weight: 500;
+      line-height: 1.1;
+      font-family: var(--font-sans);
+      white-space: nowrap;
+    }
+    .meta-pill .pill-l { font-weight: 500; opacity: 0.7; }
+    .meta-pill .pill-v { font-weight: 600; }
+    .meta-pill.key {
+      background: rgba(255, 111, 0, 0.12);
+      color: var(--primary);
+      border: 0.5px solid rgba(255, 111, 0, 0.25);
+    }
+    .meta-pill.key .pill-l { color: var(--primary); opacity: 0.7; }
+    .meta-pill.gray {
+      background: var(--card);
+      color: var(--text-secondary);
+      border: 0.5px solid var(--hairline);
+    }
+    .meta-pill.gray .pill-l { color: var(--text-tertiary); opacity: 1; }
+    .meta-pill.gray .pill-v { color: var(--text); }
+
+    .sc-note {
+      margin-left: auto;
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      font-style: italic;
+      color: var(--text-secondary);
+    }
+
+    .sc-body {
+      font-family: var(--font-sans);
+      /* Honors the --print-scale set by the size segmented control */
+      font-size: calc(0.95rem * var(--print-scale, 1));
+      color: var(--text);
+      line-height: 1.42;
+    }
+
+    /* Inline chord-above-syllable rendering — robust at every font scale.
+       Each syllable is an inline-block (stable containing block) and the
+       chord is placed via translateY(-100%) so it always sits exactly one
+       chord-height above the syllable, regardless of body font size. */
+    .lyr-line {
+      position: relative;
+      line-height: 1;              /* .syl flex-column owns vertical sizing now */
+      margin-bottom: 0.6em;
+      /* Keep words intact — never split mid-word (no "mis / takes") */
+      word-break: normal;
+      overflow-wrap: normal;
+      hyphens: manual;
+    }
+    .lyr-no-chord { line-height: 1.45; }
+    .lyr-blank { height: 0.6em; }
+
+    /* Chord+syllable stack: each .syl is a tiny vertical column —
+       chord on top, lyric below. Wrapping happens between .syl units, so
+       a wrapped line never collides with the previous line's text. */
+    .syl {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      vertical-align: bottom;
+      white-space: nowrap;
+      word-break: keep-all;
+      overflow-wrap: normal;
+      line-height: 1.25;
+    }
+    .syl-pad { display: inline-block; min-width: 1.5em; }
+
+    .ch-above {
+      font-family: var(--font-sans);
+      font-weight: 700;
+      color: var(--chord-color);
+      font-size: 0.82em;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+      line-height: 1.1;
+      margin-bottom: 0.1em;
+    }
+
+    /* Tight typographic chord — root + tucked accidental + tucked extension
+       reads as ONE token, not three separate pieces */
+    .ch-above .ch-acc {
+      font-size: 0.72em;
+      vertical-align: 0.45em;
+      margin-left: -0.08em;
+      margin-right: 0.01em;
+      font-weight: 700;
+    }
+    .ch-above .ch-ext {
+      font-size: 0.68em;
+      vertical-align: 0.45em;
+      margin-left: 0;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    /* Chord-only line (intros / instrumental sections) */
+    .chord-row {
+      padding: 2px 0 4px 0;
+      line-height: 1.4;
+    }
+    .ch-only {
+      display: inline-block;
+      font-family: var(--font-sans);
+      font-weight: 700;
+      color: var(--chord-color);
+      font-size: 0.85rem;
+      margin-right: 0.6em;
+    }
+    .ch-only .ch-acc { font-size: 0.72em; vertical-align: 0.45em; margin-left: -0.08em; font-weight: 700; }
+    .ch-only .ch-ext { font-size: 0.68em; vertical-align: 0.45em; font-weight: 700; letter-spacing: -0.02em; }
+
+    /* Nashville mode keeps the classic monospace-aligned look */
+    .sc-pre {
       font-family: var(--font-mono);
       font-size: 0.85rem;
-      line-height: 1.8;
+      line-height: 1.75;
       white-space: pre;
       color: var(--text);
       overflow-x: auto;
+      margin: 0;
     }
-
-    .output-view .chord { color: var(--chord-color); font-weight: 600; }
+    .sc-pre .chord { color: var(--chord-color); font-weight: 600; }
 
     /* Individual chord tokens become hoverable when a shape is known */
     .chord-token.known {
@@ -859,39 +1440,62 @@
     .tap-tempo {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
+      padding: 0 4px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xs);
+      background: var(--surface-alt);
+      transition: border-color var(--t-short) var(--ease-quart);
+    }
+    .tap-tempo:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    .bpm-input {
+      width: 36px;
+      padding: 4px 0 4px 6px;
+      border: none;
+      background: transparent;
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      -moz-appearance: textfield;
+    }
+    .bpm-input::-webkit-outer-spin-button,
+    .bpm-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .bpm-input::placeholder { color: var(--text-tertiary); font-weight: 500; }
+    .bpm-input:focus { outline: none; }
+
+    .bpm-suffix {
+      font-size: 0.66rem;
+      font-weight: 500;
+      color: var(--text-tertiary);
+      letter-spacing: 0.02em;
+      margin-right: 2px;
     }
 
     .tap-btn {
-      padding: 4px 10px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-xs);
-      background: var(--surface);
+      padding: 3px 9px;
+      border: none;
+      border-left: 1px solid var(--border);
+      border-radius: 0;
+      background: transparent;
       cursor: pointer;
-      font-size: 0.7rem;
-      font-weight: 600;
+      font-size: 0.66rem;
+      font-weight: 700;
       color: var(--text-secondary);
-      transition: all var(--transition);
+      transition: color var(--transition);
       font-family: var(--font-sans);
       text-transform: uppercase;
-      letter-spacing: 0.03em;
+      letter-spacing: 0.06em;
     }
 
-    .tap-btn:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
+    .tap-btn:hover { color: var(--primary); }
     .tap-btn:active { transform: scale(0.95); }
-
-    .bpm-display {
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--text-tertiary);
-      font-variant-numeric: tabular-nums;
-      min-width: 60px;
-    }
-
-    .bpm-display strong {
-      color: var(--text);
-      font-size: 0.85rem;
-    }
 
     /* ── PDF AREA ── */
     .pdf-area { height: 100%; display: flex; flex-direction: column; }
@@ -1210,6 +1814,36 @@
     .btn-ghost { background: transparent; border-color: transparent; color: var(--text-secondary); }
     .btn-ghost:hover { background: var(--surface-alt); color: var(--text); border-color: var(--border); }
     .btn-sm { padding: 4px 10px; font-size: 0.72rem; }
+
+    /* Font-size segmented control — sits in the action bar between Print
+       and Open web search. Three discrete sizes; persists in localStorage. */
+    .size-seg {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xs);
+      overflow: hidden;
+      background: var(--surface-alt);
+    }
+    .size-btn {
+      padding: 4px 10px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      transition: color var(--t-short) var(--ease-quart),
+                  background var(--t-short) var(--ease-quart);
+      letter-spacing: 0.01em;
+    }
+    .size-btn:not(:last-child) { border-right: 1px solid var(--border); }
+    .size-btn:hover { color: var(--text); }
+    .size-btn.active {
+      background: var(--primary);
+      color: #fff;
+    }
 
     /* Quiet text-only action used for secondary actions like "Find chords" */
     .action-link {
@@ -1568,23 +2202,443 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── PRINT ── */
+    /* ── PRINT — optimized for paper / music stand reading ── */
+    @page {
+      size: letter;
+      /* Bottom margin reserves room for the fixed .print-brand footer
+         (≈14pt). Too tight a margin caused Chrome to spawn a phantom 2nd
+         page even when content fit on one. */
+      margin: 0.4in 0.5in 0.4in 0.5in;
+    }
+
+    /* Print-only branded footer — pinned to every page */
+    .print-brand { display: none; }
     @media print {
-      body { background: #fff !important; color: #000 !important; }
-      .topbar, .transpose-strip, .panel-side, .action-bar, .editor-tabs, .toast, .pdf-topbar, .fullscreen-overlay, .step-bar, .paste-helper-bar, .ready-label, .completion-state, .app-footer, .key-confirm, .songs-menu, .loop-bar, .chord-pop { display: none !important; }
+      .print-brand {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: nowrap;
+        gap: 4pt;
+        position: fixed;
+        bottom: 0.04in;
+        left: 0.5in;
+        right: 0.5in;
+        height: 10pt;
+        line-height: 10pt;
+        white-space: nowrap;
+        overflow: hidden;
+        text-align: center;
+        font-family: 'SF Pro Text', system-ui, sans-serif;
+        font-size: 7pt;
+        font-weight: 500;
+        color: #999;
+        letter-spacing: 0.01em;
+        z-index: 999;
+      }
+      .print-brand .pb-name { color: #555; font-weight: 700; }
+      .print-brand .pb-sep { color: #ccc; }
+      .print-brand .pb-tag { color: #888; }
+      .print-brand .pb-perm {
+        color: #aaa;
+        font-style: italic;
+        font-size: 6.5pt;
+      }
+    }
+
+    @media print {
+      /* ─── HARD LIGHT-THEME RESET ───
+         Forcibly override ALL theme variables so dark mode (and any other
+         theme) cannot leak into the printable surface. This guarantees a
+         stable white-paper chart whether Chrome's "Background graphics"
+         is ON or OFF, and whether the app is in light or dark mode. */
+      :root,
+      [data-theme="dark"],
+      [data-theme="light"] {
+        --bg: #ffffff !important;
+        --surface: #ffffff !important;
+        --surface-alt: #fafafa !important;
+        --surface-raised: #ffffff !important;
+        --card: rgba(0,0,0,0.02) !important;
+        --border: #d6d6d6 !important;
+        --hairline: rgba(0,0,0,0.10) !important;
+        --divider: rgba(0,0,0,0.06) !important;
+        --text: #000000 !important;
+        --text-secondary: #555555 !important;
+        --text-tertiary: #888888 !important;
+        --primary-light: rgba(255, 111, 0, 0.10) !important;
+        --primary-tint: rgba(255, 111, 0, 0.16) !important;
+      }
+
+      /* Force exact color rendering so colored borders/accents print
+         consistently when Background graphics is enabled */
+      html, body, .paper, .section-card, .meta-pill,
+      #printHeader, .song-nav {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+
+      /* Reset chrome — kill all flex/scroll constraints so content sizes naturally.
+         CRITICAL for print: a stray `display:flex` or `height:100%` on html/body
+         was making body 962px tall (full viewport) and triggering a phantom 2nd
+         page on empty/short songs. We hard-reset every layout dimension here. */
+      html {
+        background: #ffffff !important;
+        color: #000000 !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        display: block !important;
+        overflow: visible !important;
+      }
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        display: block !important;
+        overflow: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      .editor-pane, .editor-wrap, .panel, .panel-main, #previewPane, .workspace {
+        flex: none !important;
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+      .topbar, .transpose-strip, .panel-side, .action-bar, .editor-tabs,
+      .toast, .pdf-topbar, .fullscreen-overlay, .step-bar, .paste-helper-bar,
+      .ready-label, .completion-state, .app-footer, .key-confirm,
+      .songs-menu, .loop-bar, .chord-pop { display: none !important; }
       .chord-token { border-bottom: none !important; }
       .workspace { display: block !important; overflow: visible !important; }
       .panel-main { width: 100% !important; }
       .editor-pane { overflow: visible !important; }
-      #printHeader { display: block !important; margin-bottom: 16px; }
-      #printHeader h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 2px; color: #000; }
-      #printHeader p { font-size: 0.9rem; color: #555; }
-      .output-view { padding: 0; font-size: 11pt; line-height: 1.9; color: #000; }
-      .output-view .chord { color: #000 !important; }
-      .output-view .section { color: #444 !important; }
+
+      /* Header — Arship-family hierarchy:
+         Big title + artist on left, metadata as pills on the right baseline. */
+      #printHeader {
+        display: flex !important;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 14pt;
+        margin: 0 0 12pt 0;
+        column-span: all;
+        page-break-after: avoid;
+        break-after: avoid;
+        border-bottom: 0.5pt solid #e2e2e2;
+        padding-bottom: 8pt;
+      }
+      #printHeader .ph-left { flex: 1; min-width: 0; }
+      #printHeader .ph-right {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        gap: 14pt;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        padding-bottom: 2pt;
+      }
+      #printHeader h2 {
+        font-size: 22pt;
+        font-weight: 800;
+        margin: 0;
+        color: #000;
+        letter-spacing: -0.025em;
+        line-height: 1.02;
+      }
+      #printHeader .ph-artist {
+        font-size: 10pt;
+        color: #6e6e73;
+        margin: 3pt 0 0 0;
+        font-family: 'SF Pro Text', system-ui, sans-serif;
+        font-weight: 500;
+        letter-spacing: 0.005em;
+      }
+
+      /* Metadata pills — match the Arship prototype's 8px gap */
+      #printHeader p {
+        margin: 0;
+        font-family: 'SF Pro Text', system-ui, sans-serif;
+        display: inline-flex;
+        align-items: center;
+        gap: 6pt;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+      #printHeader .meta-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 3pt;
+        padding: 2.5pt 8pt;
+        border-radius: 10pt;
+        font-size: 8pt;
+        font-weight: 500;
+        font-family: 'SF Pro Text', system-ui, sans-serif;
+        line-height: 1.1;
+        white-space: nowrap;
+      }
+      #printHeader .meta-pill .pill-l {
+        font-weight: 500;
+        opacity: 0.7;
+      }
+      #printHeader .meta-pill .pill-v {
+        font-weight: 700;
+      }
+      #printHeader .meta-pill.key {
+        background: rgba(255, 111, 0, 0.12) !important;
+        color: #FF6F00 !important;
+        border: 0.5pt solid rgba(255, 111, 0, 0.3) !important;
+      }
+      #printHeader .meta-pill.key .pill-l { color: #FF6F00 !important; opacity: 0.65; }
+      #printHeader .meta-pill.gray {
+        background: rgba(0,0,0,0.04) !important;
+        color: #1d1d1f !important;
+        border: 0.5pt solid rgba(0,0,0,0.08) !important;
+      }
+      #printHeader .meta-pill.gray .pill-l { color: #6e6e73 !important; }
+
+      /* Body — section cards in two columns */
+      .output-view {
+        padding: 0;
+        margin: 0;
+        column-count: 2;
+        column-gap: 0.45in;
+        /* AUTO packs columns sequentially so page 1 fills before content
+           overflows to page 2. BALANCE was the cause of dead space + lost
+           sections — it tries to keep columns equal and pushes content. */
+        column-fill: auto;
+        display: block;
+        gap: 0;
+      }
+
+      /* Top roadmap strip: contained song-map, spans both columns */
+      .song-nav {
+        column-span: all;
+        display: flex !important;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 5pt 9pt;
+        padding: 6pt 10pt;
+        margin: 0 0 11pt 0;
+        background: #f5f5f7 !important;
+        border: 0.4pt solid #d6d6d6 !important;
+        border-radius: 5pt;
+        font-family: 'SF Pro Text', system-ui, sans-serif;
+      }
+      .nav-step {
+        font-size: 8.5pt;
+        font-weight: 600;
+        color: #555 !important;
+        letter-spacing: 0.005em;
+        display: inline-flex;
+        align-items: center;
+        gap: 2pt;
+      }
+      .nav-sep {
+        font-size: 8.5pt;
+        color: #bbb !important;
+        font-weight: 400;
+      }
+      .nav-step[data-type="chorus"],
+      .nav-step[data-type="bridge"] {
+        color: #FF6F00 !important;
+      }
+      .nav-step[data-type="tag"],
+      .nav-step[data-type="vamp"],
+      .nav-step[data-type="refrain"],
+      .nav-step[data-type="hook"] {
+        color: #000 !important;
+      }
+      .nav-repeat {
+        font-size: 7.5pt;
+        opacity: 0.6;
+        margin-left: 1pt;
+      }
+
+      /* Section cards — Arship-calm boxes. Subtle background + hairline border.
+         Emphasis sections (Chorus/Bridge) get an orange left-edge stripe.
+         Signature sections (Tag/Vamp/Refrain/Hook) carry a soft orange tint. */
+      .section-card {
+        background: #fafafa !important;
+        border: 0.5pt solid #d6d6d6 !important;
+        border-radius: 6pt;
+        padding: 8pt 14pt 10pt 14pt;
+        /* Margin on all 4 sides so cards float inside their column with
+           real breathing room — no card touches another card or column edge */
+        margin: 4pt 4pt 12pt 4pt;
+        position: relative;
+        overflow: visible;          /* never clip — chord positions sit above */
+        /* Allow tall sections (long Bridge, dense Verse) to flow across
+           columns/pages instead of leaving dead space on page 1. Each
+           individual chord+lyric pair is still kept whole below. */
+        break-inside: auto;
+        page-break-inside: auto;
+      }
+      .section-card.is-emphasis,
+      .section-card.is-signature {
+        padding-left: 16pt;             /* room for stripe + breathing space */
+      }
+      .section-card.is-emphasis::before,
+      .section-card.is-signature::before {
+        content: '';
+        position: absolute;
+        left: 0; top: 0; bottom: 0;
+        width: 2.5pt;
+        background: #FF6F00 !important;
+      }
+      .section-card.is-signature {
+        background: rgba(255, 111, 0, 0.05) !important;
+        border-color: rgba(255, 111, 0, 0.25) !important;
+      }
+
+      .lyr-line, .chord-row {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .sc-head {
+        display: flex;
+        align-items: baseline;
+        gap: 5pt;
+        margin-bottom: 4pt !important;
+        break-after: avoid;
+        page-break-after: avoid;
+      }
+
+      .sc-name {
+        font-family: 'SF Pro Text', system-ui, sans-serif;
+        font-size: calc(10.5pt * var(--print-scale, 1));
+        font-weight: 700;
+        letter-spacing: 0;
+        color: #000 !important;
+      }
+      .section-card.is-signature .sc-name {
+        color: #FF6F00 !important;
+      }
+
+      /* Repeat indicator: quiet ×N, sits next to the section name */
+      .sc-repeat {
+        background: transparent !important;
+        color: #FF6F00 !important;
+        font-family: 'SF Pro Text', system-ui, sans-serif;
+        font-size: calc(8pt * var(--print-scale, 1)) !important;
+        font-weight: 700;
+        padding: 0 !important;
+        margin-left: 2pt !important;
+        letter-spacing: 0;
+      }
+
+      .sc-note {
+        margin-left: auto !important;
+        font-family: 'SF Pro Text', system-ui, sans-serif;
+        font-size: 7.5pt;
+        font-style: italic;
+        color: #666 !important;
+      }
+
+      /* All print body sizes derive from --print-scale (set via the
+         font-size control: 0.92 Compact / 1.0 Comfortable / 1.15 Large).
+         Once font-size is set, every chord/lyric measurement is em-based
+         so scaling the font scales spacing too — no broken layouts. */
+      .sc-body {
+        font-family: 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif !important;
+        font-size: calc(11pt * var(--print-scale, 1)) !important;
+        color: #000 !important;
+        line-height: 1.4;
+      }
+
+      /* Inline chord-above-syllable: rock-solid positioning at every scale.
+         The chord uses translateY(-100%) so it sits exactly above the
+         syllable regardless of body font size — no overlap, no drift. */
+      .lyr-line {
+        position: relative;
+        line-height: 1;
+        margin-bottom: 0.45em;
+        word-break: normal;
+        overflow-wrap: normal;
+        hyphens: manual;
+      }
+      .lyr-no-chord { line-height: 1.4; }
+      .lyr-blank { height: 0.4em; }
+
+      /* Chord+syllable stack — flexbox column keeps each chord glued
+         to its syllable so wrapping never causes overlaps. */
+      .syl {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: flex-start;
+        vertical-align: bottom;
+        white-space: nowrap;
+        word-break: keep-all;
+        overflow-wrap: normal;
+        line-height: 1.25;
+      }
+      .syl-pad { display: inline-block; min-width: 1.2em; }
+
+      .ch-above {
+        font-family: 'SF Pro Text', system-ui, sans-serif;
+        font-weight: 700;
+        color: #000 !important;
+        font-size: 0.78em;
+        letter-spacing: -0.015em;
+        white-space: nowrap;
+        line-height: 1.1;
+        margin-bottom: 0.08em;
+      }
+      .ch-above .ch-acc {
+        font-size: 0.72em;
+        vertical-align: 0.45em;
+        margin-left: -0.08em;
+        margin-right: 0.01em;
+        font-weight: 700;
+      }
+      .ch-above .ch-ext {
+        font-size: 0.68em;
+        vertical-align: 0.45em;
+        margin-left: 0;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      .chord-row {
+        padding: 0 0 0.3em 0;
+        line-height: 1.2;
+      }
+      .ch-only {
+        display: inline-block;
+        font-family: 'SF Pro Text', system-ui, sans-serif;
+        font-weight: 700;
+        color: #000 !important;
+        font-size: 0.92em;        /* slightly smaller than body for chord-only rows */
+        margin-right: 0.6em;
+      }
+      .ch-only .ch-acc { font-size: 0.72em; vertical-align: 0.45em; margin-left: -0.08em; }
+      .ch-only .ch-ext { font-size: 0.68em; vertical-align: 0.45em; }
+
+      .sc-pre {
+        font-family: 'SF Mono', 'Fira Code', 'Consolas', 'Monaco', 'Menlo', monospace !important;
+        font-size: 9.5pt !important;
+        line-height: 1.4;
+        white-space: pre;
+        color: #000 !important;
+        margin: 0;
+      }
+      .sc-pre .chord { color: #000 !important; font-weight: 700; }
+
+      /* Hover underline + tokens shouldn't print */
+      .chord-token { border-bottom: none !important; }
     }
 
-    /* ── STEP INDICATOR ── */
+    /* ── STEP INDICATOR ──
+       Visible during onboarding (when the user hasn't completed all 3 steps).
+       Once they have a video + lyrics, the step bar collapses to reclaim
+       workspace — Prep stops nagging and lets the chart breathe. */
     .step-bar {
       display: flex;
       align-items: center;
@@ -1594,7 +2648,20 @@
       background: var(--surface);
       border-bottom: 1px solid var(--border);
       flex-shrink: 0;
-      transition: background var(--transition), border-color var(--transition);
+      max-height: 60px;
+      overflow: hidden;
+      transition: max-height 0.4s var(--ease-quart),
+                  padding 0.4s var(--ease-quart),
+                  opacity 0.3s var(--ease-quart),
+                  border-color var(--transition),
+                  background var(--transition);
+    }
+    .step-bar.done {
+      max-height: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      opacity: 0;
+      border-bottom-color: transparent;
     }
 
     .step {
@@ -1658,7 +2725,8 @@
       flex-shrink: 0;
     }
 
-    /* ── PASTE HELPER ── */
+    /* ── PASTE HELPER ──
+       Onboarding scaffold — collapses once the user has lyrics in the editor */
     .paste-helper-bar {
       display: flex;
       align-items: center;
@@ -1667,7 +2735,20 @@
       border-bottom: 1px solid var(--border);
       background: var(--surface-alt);
       flex-shrink: 0;
-      transition: background var(--transition), border-color var(--transition);
+      max-height: 60px;
+      overflow: hidden;
+      transition: max-height 0.4s var(--ease-quart),
+                  padding 0.4s var(--ease-quart),
+                  opacity 0.3s var(--ease-quart),
+                  background var(--transition),
+                  border-color var(--transition);
+    }
+    .paste-helper-bar.done {
+      max-height: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      opacity: 0;
+      border-bottom-color: transparent;
     }
 
     .paste-helper-btn {
@@ -1702,6 +2783,16 @@
       opacity: 1;
       transform: translateY(0);
     }
+
+    /* Always-visible, calm permission note next to the paste button.
+       Hidden when the helper-msg is showing so they don't double up. */
+    .paste-permission-note {
+      font-size: 0.7rem;
+      color: var(--text-tertiary);
+      letter-spacing: 0;
+      transition: opacity 0.2s ease;
+    }
+    .paste-helper-msg.show ~ .paste-permission-note { opacity: 0; }
 
     /* ── GLOW ANIMATION (when video loads, draws attention to editor) ── */
     @keyframes editorGlow {
@@ -1752,6 +2843,7 @@
       .topbar-brand { font-size: 0.88rem; }
       .topbar-divider, .topbar-spacer { display: none; }
       .topbar-input { width: 130px; }
+      .topbar-input.topbar-input-sm { width: 110px; }
       .workspace { flex-direction: column; overflow-y: auto; }
       .panel-main { min-height: 50vh; }
       .panel-side { width: 100%; border-left: none; border-top: 1px solid var(--border); min-height: 300px; }
@@ -1801,6 +2893,11 @@
     <input type="text" id="songTitle" class="topbar-input" placeholder="Auto-fills from YouTube...">
   </div>
 
+  <div class="topbar-field">
+    <label for="songArtist">Artist</label>
+    <input type="text" id="songArtist" class="topbar-input topbar-input-sm" placeholder="Artist or source">
+  </div>
+
   <div class="topbar-field key-field">
     <label for="originalKey">Key</label>
     <select id="originalKey" class="topbar-select"></select>
@@ -1833,11 +2930,12 @@
       </button>
       <div class="songs-menu" id="songsMenu" role="menu">
         <div class="songs-menu-header">
-          <span class="songs-menu-title">Your songs</span>
+          <span class="songs-menu-title">Your saved songs</span>
           <button class="songs-new-btn" id="songsNewBtn">+ New song</button>
         </div>
         <div class="songs-menu-list" id="songsMenuList"></div>
         <div class="songs-menu-empty" id="songsMenuEmpty">No saved songs yet. Start editing — it auto-saves.</div>
+        <div class="songs-menu-foot">Saved on this device only — Arship doesn't upload your charts.</div>
       </div>
     </div>
     <button class="tb-btn" id="darkModeBtn" title="Dark mode">
@@ -1874,8 +2972,9 @@
   </label>
 
   <div class="tap-tempo">
-    <button class="tap-btn" id="tapTempoBtn">Tap BPM</button>
-    <span class="bpm-display" id="bpmDisplay"></span>
+    <input type="number" id="bpmInput" class="bpm-input" placeholder="—" min="30" max="240" aria-label="Tempo (BPM)">
+    <span class="bpm-suffix">bpm</span>
+    <button class="tap-btn" id="tapTempoBtn" title="Tap to set tempo">Tap</button>
   </div>
 
   <span class="pdf-notice hidden" id="pdfNotice">PDF charts are view-only</span>
@@ -1883,11 +2982,11 @@
 
 <!-- ════ STEP INDICATOR ════ -->
 <div class="step-bar" id="stepBar">
-  <div class="step active" data-step="1"><span class="step-num"><span>1</span></span>Paste YouTube link</div>
+  <div class="step active" data-step="1"><span class="step-num"><span>1</span></span>Add a practice reference</div>
   <div class="step-divider"></div>
-  <div class="step" data-step="2"><span class="step-num"><span>2</span></span>Paste lyrics + chords</div>
+  <div class="step" data-step="2"><span class="step-num"><span>2</span></span>Paste your chart</div>
   <div class="step-divider"></div>
-  <div class="step" data-step="3"><span class="step-num"><span>3</span></span>Transpose & practice</div>
+  <div class="step" data-step="3"><span class="step-num"><span>3</span></span>Transpose &amp; prepare</div>
   <span class="song-ready-badge" id="songReadyBadge">
     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
     Song ready
@@ -1929,29 +3028,59 @@
       <div class="paste-helper-bar" id="pasteHelperBar">
         <button class="paste-helper-btn" id="pasteHelperBtn">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Paste lyrics here (Ctrl+V / Cmd+V)
+          Paste your chart
         </button>
-        <span class="paste-helper-msg" id="pasteHelperMsg">Copy lyrics from any site, then paste them here (Cmd / Ctrl + V)</span>
+        <span class="paste-helper-msg" id="pasteHelperMsg">Paste lyrics, chords, or charts your team is cleared to use.</span>
+        <span class="paste-permission-note" aria-hidden="false">Paste lyrics, chords, or charts your team is cleared to use.</span>
       </div>
       <div class="editor-pane" id="editorPane">
-        <textarea class="lyrics-editor" id="lyricsInput" placeholder="[Verse 1]
-Paste your lyrics here...
+        <textarea class="lyrics-editor" id="lyricsInput" placeholder="Verse 1
+G              D
+Amazing grace, how sweet the sound
+Em         C
+That saved a wretch like me
 
-G                 C
-Add chords above lines, or inline
+Chorus
+G                D
+My chains are gone, I've been set free
 
-Tip: load a YouTube reference, then paste lyrics or find chords to get started."></textarea>
+
+How to format your chart so Prep looks its best:
+  • Label each section on its own line:  Verse 1  ·  Chorus  ·  Bridge
+  • Leave a blank line between sections
+  • Put chords on the line above the lyrics  (or inline:  [G]grace)
+  • Paste anything you have permission to use — Prep handles transpose,
+    layout, and print
+
+Need a starting point?  Tap “Open web search”."></textarea>
       </div>
       <div class="editor-pane hidden" id="previewPane">
-        <div id="printHeader" style="display:none;">
-          <h2 id="printTitle"></h2>
-          <p id="printKey"></p>
+        <!-- Paper preview: makes the on-screen Preview render exactly like the
+             printed page — same paper background, same column layout, same
+             typography. What you see here is what the print will produce. -->
+        <div class="paper" id="paperPreview">
+          <div id="printHeader">
+            <div class="ph-left">
+              <h2 id="printTitle"></h2>
+              <p id="printArtist" class="ph-artist"></p>
+            </div>
+            <div class="ph-right">
+              <p id="printKey"></p>
+            </div>
+          </div>
+          <div class="ready-label" id="readyLabel">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Ready for rehearsal
+          </div>
+          <div class="output-view" id="outputArea"></div>
+          <div class="paper-foot" aria-hidden="true">
+            <span class="pf-name">Prep by Arship</span>
+            <span class="pf-sep">·</span>
+            <span class="pf-tag">prepare and learn the song</span>
+            <span class="pf-sep">·</span>
+            <span class="pf-perm">Prepared from user-provided song materials.</span>
+          </div>
         </div>
-        <div class="ready-label" id="readyLabel">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          Ready for rehearsal
-        </div>
-        <div class="output-view" id="outputArea"></div>
       </div>
       <div class="action-bar">
         <button class="btn btn-primary btn-sm" id="copyBtn">
@@ -1966,7 +3095,15 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
           Print
         </button>
-        <button class="action-link" id="findChordsBtn" title="Search for chords online">Find chords</button>
+
+        <!-- Font size segmented control: applies to both screen Preview and Print -->
+        <div class="size-seg" role="group" aria-label="Chart font size">
+          <button class="size-btn" data-size="compact" title="Compact">A−</button>
+          <button class="size-btn active" data-size="comfortable" title="Comfortable">A</button>
+          <button class="size-btn" data-size="large" title="Large">A+</button>
+        </div>
+
+        <button class="action-link" id="findChordsBtn" title="Open a web search for this song">Open web search</button>
       </div>
     </div>
 
@@ -1990,16 +3127,16 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
   <div class="panel panel-side">
     <div class="yt-section">
       <div class="panel-header">
-        <span class="panel-label">YouTube Reference</span>
+        <span class="panel-label">Practice reference</span>
       </div>
       <div class="yt-input-row">
-        <input type="text" id="youtubeUrl" class="yt-url-input" placeholder="Paste a YouTube link to start">
+        <input type="text" id="youtubeUrl" class="yt-url-input" placeholder="Paste a YouTube link to practice along...">
         <button class="yt-load-btn" id="loadVideoBtn">Load</button>
       </div>
       <div class="yt-player-area" id="videoContainer">
         <div class="yt-placeholder" id="videoPlaceholder">
           <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          <div>Paste a YouTube link to start</div>
+          <div>Paste a YouTube link to practice along</div>
         </div>
       </div>
       <div class="speed-bar" id="speedBar">
@@ -2019,12 +3156,14 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
         </button>
       </div>
 
-      <!-- Contextual Find Chords hint: shows when video is loaded but lyrics are empty -->
+      <!-- Contextual web-search hint: shows when video is loaded but the editor is empty.
+           Prep does NOT supply lyrics or chords — it opens a search so the user can
+           find a source they're permitted to use, then paste it in. -->
       <div class="yt-findchords-hint" id="ytFindChordsHint">
-        <span class="yt-findchords-text">Need chords for this?</span>
+        <span class="yt-findchords-text">Need a chart to start from?</span>
         <button class="yt-findchords-btn" id="ytFindChordsBtn">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          Find chords
+          Open web search
         </button>
       </div>
 
@@ -2079,6 +3218,15 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
 
 <!-- Chord diagram popover — positioned dynamically near hovered chord -->
 <div class="chord-pop" id="chordPop" role="tooltip" aria-hidden="true"></div>
+
+<!-- Print-only branded footer (fixed: appears at the bottom of every printed page) -->
+<div class="print-brand" aria-hidden="true">
+  <span class="pb-name">Prep by Arship</span>
+  <span class="pb-sep">·</span>
+  <span class="pb-tag">prepare and learn the song</span>
+  <span class="pb-sep">·</span>
+  <span class="pb-perm">Prepared from user-provided song materials.</span>
+</div>
 
 <div class="toast" id="toast"></div>
 
@@ -2277,7 +3425,7 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
   // ─── DOM ───
   const $ = id => document.getElementById(id);
   const els = {
-    songTitle: $('songTitle'), originalKey: $('originalKey'), lyricsInput: $('lyricsInput'),
+    songTitle: $('songTitle'), songArtist: $('songArtist'), originalKey: $('originalKey'), lyricsInput: $('lyricsInput'),
     transposeUp: $('transposeUp'), transposeDown: $('transposeDown'), resetTranspose: $('resetTranspose'),
     transposeStrip: $('transposeStrip'), origKeyLabel: $('origKeyLabel'), currKeyLabel: $('currKeyLabel'),
     offsetBadge: $('offsetBadge'), pdfNotice: $('pdfNotice'), outputArea: $('outputArea'),
@@ -2289,7 +3437,7 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
     youtubeUrl: $('youtubeUrl'), loadVideoBtn: $('loadVideoBtn'), videoContainer: $('videoContainer'),
     darkModeBtn: $('darkModeBtn'), fullscreenBtn: $('fullscreenBtn'), shareBtn: $('shareBtn'),
     nashvilleToggle: $('nashvilleToggle'), capoLabel: $('capoLabel'), capoFret: $('capoFret'),
-    tapTempoBtn: $('tapTempoBtn'), bpmDisplay: $('bpmDisplay'),
+    tapTempoBtn: $('tapTempoBtn'), bpmInput: $('bpmInput'),
     fullscreenOverlay: $('fullscreenOverlay'), fsTitle: $('fsTitle'), fsKey: $('fsKey'),
     fsBpm: $('fsBpm'), fsClose: $('fsClose'), fsContent: $('fsContent'),
     fsScrollToggle: $('fsScrollToggle'), fsScrollSpeed: $('fsScrollSpeed'), fsScrollLabel: $('fsScrollLabel'),
@@ -2588,42 +3736,399 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
 
     updateCapo();
 
-    // Build highlighted output
-    const lines = transposed.split('\n');
-    let currentSection = null;
-    let htmlParts = [];
+    // Build a card-based section view (Multitracks-style)
+    els.outputArea.innerHTML = renderSectionCards(transposed, currentKey);
 
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      const escaped = escapeHtml(line);
+    // Parse "Title — Artist" / "Title - Artist" / "Title (Artist)" into title + artist
+    const rawTitle = (els.songTitle.value || '').trim();
+    const explicitArtist = (els.songArtist && els.songArtist.value || '').trim();
+    let title = rawTitle, artist = explicitArtist;
 
-      if (/^\[.*\]$/.test(line.trim())) {
-        htmlParts.push('<span class="section">' + escaped + '</span>');
-        continue;
-      }
-
-      if (isChordLine(line)) {
-        let displayLine = escaped;
-        if (nashvilleMode) {
-          displayLine = escapeHtml(nashvilleLine(line, currentKey));
-          htmlParts.push('<span class="chord">' + displayLine + '</span>');
-        } else {
-          const TOKEN_RE = /([A-G][#b]?(?:m|min|maj|dim|aug|sus|add|dom)?(?:2|3|4|5|6|7|9|11|13)?(?:maj[79])?(?:\/[A-G][#b]?)?)/g;
-          const wrapped = displayLine.replace(TOKEN_RE, (m) => {
-            const known = !!lookupChord(m);
-            return '<span class="chord-token' + (known ? ' known' : '') + '" data-chord="' + m + '">' + m + '</span>';
-          });
-          htmlParts.push('<span class="chord">' + wrapped + '</span>');
-        }
+    // Fallback: parse "Title - Artist" / "Title (Artist)" only when the user
+    // hasn't explicitly entered an artist
+    if (!artist) {
+      const dashSplit = rawTitle.split(/\s+[—–-]\s+/);
+      if (dashSplit.length === 2) {
+        title = dashSplit[0].trim();
+        artist = dashSplit[1].trim();
       } else {
-        htmlParts.push(escaped);
+        const parens = rawTitle.match(/^(.+?)\s+\((.+)\)\s*$/);
+        if (parens && /[A-Z]/.test(parens[2]) && !/^(live|acoustic|extended|official|remix|reprise)$/i.test(parens[2].trim())) {
+          title = parens[1].trim();
+          artist = parens[2].trim();
+        }
+      }
+    }
+    // If user hasn't entered a title yet, fall back gracefully — but keep the
+    // header tidy by hiding the title block entirely (no awkward "Untitled")
+    els.printTitle.textContent = title || '';
+    els.printTitle.style.display = title ? '' : 'none';
+    const printArtistEl = document.getElementById('printArtist');
+    if (printArtistEl) {
+      printArtistEl.textContent = artist;
+      printArtistEl.style.display = artist ? '' : 'none';
+    }
+    // Metadata as Arship-style pills — peach Key chip + gray Tempo chip,
+    // shown only when the user has actually set them (never lie with defaults).
+    const pills = [];
+    if (currentKey) {
+      const offset = transposeSteps !== 0
+        ? ' <span style="opacity:0.55;font-weight:500;">' + sign + transposeSteps + '</span>'
+        : '';
+      pills.push('<span class="meta-pill key"><span class="pill-l">Key</span><span class="pill-v">' + currentKey + offset + '</span></span>');
+    }
+    if (bpm) {
+      pills.push('<span class="meta-pill gray"><span class="pill-l">Tempo</span><span class="pill-v">' + bpm + '</span></span>');
+    }
+    els.printKey.innerHTML = pills.join('');
+
+    // Sweep any stale overflow paper sheets left over from a prior multi-page
+    // preview. Current strategy is single-paper preview with column-fill:balance,
+    // so we never want orphaned `.paper.paper-overflow` siblings hanging around.
+    clearOverflowPages();
+  }
+
+  function clearOverflowPages() {
+    document.querySelectorAll('.paper.paper-overflow').forEach(p => p.remove());
+  }
+
+  // Map a section type to a category used for color-coding the badge
+  function sectionType(name) {
+    const raw = name.replace(/^\[|\]$/g, '').trim().toLowerCase();
+    if (/^intro\b/.test(raw)) return 'intro';
+    if (/^outro\b/.test(raw)) return 'outro';
+    if (/^ending\b/.test(raw)) return 'ending';
+    if (/^verse\b/.test(raw)) return 'verse';
+    if (/^chorus\b/.test(raw)) return 'chorus';
+    if (/^pre[-\s]?chorus\b/.test(raw)) return 'pre-chorus';
+    if (/^post[-\s]?chorus\b/.test(raw)) return 'post-chorus';
+    if (/^bridge\b/.test(raw)) return 'bridge';
+    if (/^tag\b/.test(raw)) return 'tag';
+    if (/^vamp\b/.test(raw)) return 'vamp';
+    if (/^interlude\b/.test(raw)) return 'interlude';
+    if (/^refrain\b/.test(raw)) return 'refrain';
+    if (/^instrumental\b/.test(raw)) return 'instrumental';
+    if (/^solo\b/.test(raw)) return 'solo';
+    if (/^hook\b/.test(raw)) return 'hook';
+    if (/^breakdown\b/.test(raw)) return 'breakdown';
+    if (/^turnaround\b/.test(raw)) return 'turnaround';
+    if (/^coda\b/.test(raw)) return 'coda';
+    return 'other';
+  }
+
+  // ─── Section abbreviation: "Verse 1" → V1, "Chorus" → C, etc. ───
+  // Human-readable section label.  Prep uses full names — never V1/C/B
+  // shorthand.  "[Verse 1]" → "Verse 1", "[Chorus]" → "Chorus", "[Pre-Chorus]" → "Pre-Chorus"
+  function sectionLabel(name) {
+    const raw = name.replace(/^\[|\]$/g, '').trim();
+    if (!raw) return '';
+    // Title-case each word (handles hyphens like "pre-chorus")
+    return raw.split(/(\s|-)/).map(part => {
+      if (part === ' ' || part === '-') return part;
+      return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+    }).join('');
+  }
+
+  // Backwards-compat alias for any legacy callers
+  function sectionAbbr(name) { return sectionLabel(name); }
+  function sectionFullName(name) { return sectionLabel(name); }
+
+  // Extract a repeat count from a header like "[Chorus x4]" or "[Chorus] (4x)"
+  // Returns: { name: cleanedNameWithBrackets, repeat: number|0, note: string }
+  // Known section keywords (used for bare "Verse 1" / "Chorus" detection)
+  const SECTION_KEYWORDS = [
+    'intro', 'outro', 'ending', 'end',
+    'verse', 'chorus', 'bridge', 'tag',
+    'pre-chorus', 'prechorus', 'pre chorus',
+    'post-chorus', 'postchorus', 'post chorus',
+    'vamp', 'interlude', 'refrain',
+    'instrumental', 'solo', 'hook',
+    'turnaround', 'coda', 'breakdown',
+    'pre', 'reprise',
+  ];
+
+  // Detect whether a line is a section header in any common format:
+  //   [Verse 1]
+  //   [Chorus] (Softly)
+  //   Verse 1
+  //   Chorus:
+  //   VERSE 2
+  //   Bridge x4
+  //   Interlude (Build)
+  // Returns true if line looks like a section header.
+  function isSectionHeader(line) {
+    const trimmed = line.trim();
+    if (!trimmed) return false;
+    // Bracketed form — easy
+    if (/^\[[^\]]+\]/.test(trimmed)) return true;
+    // Bare form — must be short, not a chord line, and start with a known keyword
+    if (trimmed.length > 60) return false;
+    if (isChordLine(trimmed)) return false;
+    // Strip trailing colon, parens-note, repeat markers for keyword check
+    const cleaned = trimmed
+      .replace(/[:.]+$/, '')
+      .replace(/\s*\([^)]*\)\s*$/, '')
+      .replace(/\s+(?:x\s*\d+|\d+\s*x)\s*$/i, '')
+      .trim()
+      .toLowerCase();
+    // The cleaned line should be a known keyword (optionally followed by a number)
+    const m = cleaned.match(/^([a-z][a-z\s\-]*?)\s*(\d+)?$/);
+    if (!m) return false;
+    const word = m[1].trim();
+    return SECTION_KEYWORDS.indexOf(word) !== -1;
+  }
+
+  // Parse any recognised section header (bracketed or bare) into a normalised
+  // { name: "[Foo]", repeat, note } object.
+  function parseSectionHeader(headerLine) {
+    let trimmed = headerLine.trim();
+    let inner = '', note = '', repeat = 0;
+
+    // Step 1: extract bare from brackets if present, otherwise treat whole line as the header
+    let bracketMatch = trimmed.match(/^\[(.+?)\]\s*(.*)$/);
+    if (bracketMatch) {
+      inner = bracketMatch[1].trim();
+      // After the closing ], anything that's a (note) — just in case
+      const tail = bracketMatch[2].trim();
+      const tailNote = tail.match(/^\((.+?)\)\s*$/);
+      if (tailNote) note = tailNote[1].trim();
+    } else {
+      // Bare form. Pull off trailing (...) note first
+      const noteMatch = trimmed.match(/^(.+?)\s*\((.+?)\)\s*$/);
+      if (noteMatch) {
+        inner = noteMatch[1].trim();
+        note = noteMatch[2].trim();
+      } else {
+        inner = trimmed;
+      }
+      // Strip trailing colons / dots after section name (e.g. "Chorus:")
+      inner = inner.replace(/[:.]+$/, '').trim();
+    }
+
+    // Step 2: pull repeat marker out of inner ("Chorus x4", "Bridge 4x")
+    const innerRep = inner.match(/^(.+?)\s+(?:x\s*(\d+)|(\d+)\s*x)\s*$/i);
+    if (innerRep) {
+      inner = innerRep[1].trim();
+      repeat = parseInt(innerRep[2] || innerRep[3], 10) || 0;
+    }
+
+    // Step 3: pull repeat from note ("(Softly, 4x)" / "(4x)")
+    if (note) {
+      const noteRep = note.match(/(?:^|[\s,•·\-—])\s*(?:x\s*(\d+)|(\d+)\s*x)\s*$/i);
+      if (noteRep) {
+        repeat = repeat || (parseInt(noteRep[1] || noteRep[2], 10) || 0);
+        note = note.replace(/(?:^|[\s,•·\-—])\s*(?:x\s*\d+|\d+\s*x)\s*$/i, '').trim();
       }
     }
 
-    els.outputArea.innerHTML = htmlParts.join('\n');
+    // Step 4: normalise common bare names ("Verse1" → "Verse 1")
+    inner = inner.replace(/^([A-Za-z\-]+?)(\d+)$/i, (_, word, num) => word + ' ' + num);
+    // Title-case: first letter of each word capitalised
+    inner = inner.split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
 
-    els.printTitle.textContent = els.songTitle.value || 'Untitled';
-    els.printKey.textContent = 'Key: ' + currentKey + (transposeSteps !== 0 ? ' (' + sign + transposeSteps + ')' : '');
+    return { name: '[' + inner + ']', repeat, note };
+  }
+
+  // Format a chord with typographic flourishes:
+  // F#m7 → F<sup class="acc">♯</sup><sup class="ext">m7</sup>
+  function formatChordHTML(chord) {
+    // Slash chord: handle bass separately
+    let main = chord, bass = '';
+    if (chord.includes('/')) {
+      const parts = chord.split('/');
+      main = parts[0];
+      bass = parts.slice(1).join('/');
+    }
+    function fmt(part) {
+      const m = part.match(/^([A-G])([#b]?)(.*)$/);
+      if (!m) return escapeHtml(part);
+      let html = m[1];
+      if (m[2]) html += '<sup class="ch-acc">' + (m[2] === '#' ? '♯' : '♭') + '</sup>';
+      if (m[3]) html += '<sup class="ch-ext">' + escapeHtml(m[3]) + '</sup>';
+      return html;
+    }
+    return fmt(main) + (bass ? '/' + fmt(bass) : '');
+  }
+
+  // Wrap a chord in the hover-token span (so chord diagram still works on hover)
+  function chordToken(chord) {
+    const known = lookupChord(chord) ? ' known' : '';
+    return '<span class="chord-token' + known + '" data-chord="' + escapeHtml(chord) + '">' + formatChordHTML(chord) + '</span>';
+  }
+
+  // Find chords + their column positions on a chord line
+  function parseChordLine(line) {
+    const out = [];
+    const re = /\S+/g;
+    let m;
+    while ((m = re.exec(line))) {
+      out.push({ text: m[0], col: m.index });
+    }
+    return out;
+  }
+
+  // Render a chord line + lyric line as inline chord-above-syllable HTML
+  function renderInlineStanza(chordLine, lyricLine) {
+    const chords = parseChordLine(chordLine);
+    let html = '';
+    let cursor = 0;
+    for (const c of chords) {
+      // Lyric content between cursor and chord position
+      if (c.col > cursor) {
+        html += escapeHtml(lyricLine.substring(cursor, Math.min(c.col, lyricLine.length)));
+        cursor = Math.min(c.col, lyricLine.length);
+      }
+      // Find the syllable this chord anchors to: from cursor to the next whitespace
+      let end = cursor;
+      while (end < lyricLine.length && /\S/.test(lyricLine[end])) end++;
+      let word = lyricLine.substring(cursor, end);
+      // If the chord position lands BEYOND the lyric line, emit a placeholder
+      if (cursor >= lyricLine.length) {
+        // No more lyric — chord is "free-floating" at end; render as a narrow anchor
+        html += '<span class="syl"><span class="ch-above">' + chordToken(c.text) + '</span><span class="syl-pad">&nbsp;</span></span>';
+      } else {
+        if (word === '') {
+          // Anchor at whitespace — use a non-breaking marker
+          html += '<span class="syl"><span class="ch-above">' + chordToken(c.text) + '</span>&nbsp;</span>';
+        } else {
+          html += '<span class="syl"><span class="ch-above">' + chordToken(c.text) + '</span>' + escapeHtml(word) + '</span>';
+        }
+        cursor = end;
+      }
+    }
+    // Trailing lyric
+    if (cursor < lyricLine.length) {
+      html += escapeHtml(lyricLine.substring(cursor));
+    }
+    return html;
+  }
+
+  // Render a chord-only line (no lyric below) — chords with their spacing
+  function renderChordOnlyLine(line) {
+    const chords = parseChordLine(line);
+    if (!chords.length) return '';
+    // Convert to inline with thin gaps preserving relative spacing
+    const out = [];
+    let prev = 0;
+    for (const c of chords) {
+      const gap = c.col - prev;
+      if (gap > 0) out.push('<span class="ch-gap" style="display:inline-block;width:' + (gap * 0.45) + 'em;"></span>');
+      out.push('<span class="ch-only">' + chordToken(c.text) + '</span>');
+      prev = c.col + c.text.length;
+    }
+    return '<div class="chord-row">' + out.join('') + '</div>';
+  }
+
+  // Render a single section's body, pairing chord+lyric lines into inline stanzas
+  function renderBlockBody(lines, currentKey) {
+    if (nashvilleMode) {
+      // Nashville mode keeps the classic monospace-aligned look
+      const out = [];
+      for (const line of lines) {
+        const escaped = escapeHtml(line);
+        if (isChordLine(line)) {
+          out.push('<span class="chord">' + escapeHtml(nashvilleLine(line, currentKey)) + '</span>');
+        } else {
+          out.push(escaped);
+        }
+      }
+      return '<pre class="sc-pre">' + out.join('\n') + '</pre>';
+    }
+
+    const out = [];
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      if (line.trim() === '') {
+        out.push('<div class="lyr-blank"></div>');
+        continue;
+      }
+      if (isChordLine(line)) {
+        const next = lines[i + 1];
+        if (next !== undefined && next.trim() !== '' && !isChordLine(next)) {
+          // Pair this chord line with the next lyric line
+          out.push('<div class="lyr-line">' + renderInlineStanza(line, next) + '</div>');
+          i++; // skip the lyric line we just consumed
+        } else {
+          // Chord-only line (no lyric beneath)
+          out.push(renderChordOnlyLine(line));
+        }
+      } else {
+        // Plain lyric (no chords above)
+        out.push('<div class="lyr-line lyr-no-chord">' + escapeHtml(line) + '</div>');
+      }
+    }
+    return out.join('');
+  }
+
+  // Parse the song text into section blocks; collect for both navigator + cards
+  function renderSectionCards(text, currentKey) {
+    const lines = text.split('\n');
+    const blocks = [];
+    let cur = null;
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      // Section headers: bracketed `[Verse 1]` OR bare `Verse 1` / `Chorus` / `Bridge x4`
+      if (isSectionHeader(trimmed)) {
+        if (cur) blocks.push(cur);
+        const parsed = parseSectionHeader(trimmed);
+        cur = {
+          name: parsed.name,
+          abbr: sectionAbbr(parsed.name),
+          full: sectionFullName(parsed.name),
+          type: sectionType(parsed.name),
+          note: parsed.note,
+          repeat: parsed.repeat,
+          body: [],
+        };
+      } else {
+        if (!cur) cur = { name: '', abbr: '', full: '', type: '', note: '', repeat: 0, body: [] };
+        cur.body.push(line);
+      }
+    }
+    if (cur) blocks.push(cur);
+
+    // Roadmap strip: human-readable labels with middot separators
+    // Example: "Intro · Verse 1 · Chorus · Verse 2 · Bridge · Chorus · Ending"
+    const named = blocks.filter(b => b.full);
+    const navItems = named.map((b, i) => {
+      const sep = i > 0 ? '<span class="nav-sep" aria-hidden="true">·</span>' : '';
+      const repeat = b.repeat > 1 ? '<span class="nav-repeat">×' + b.repeat + '</span>' : '';
+      return sep +
+        '<span class="nav-step" data-type="' + b.type + '">' +
+          escapeHtml(b.full) + repeat +
+        '</span>';
+    }).join('');
+    const nav = navItems ? '<div class="song-nav" role="list" aria-label="Song structure">' + navItems + '</div>' : '';
+
+    const cards = blocks.map(b => {
+      while (b.body.length && b.body[0].trim() === '') b.body.shift();
+      while (b.body.length && b.body[b.body.length - 1].trim() === '') b.body.pop();
+      if (!b.body.length && !b.full) return '';
+
+      const repeatPill = b.repeat > 1
+        ? '<span class="sc-repeat">×' + b.repeat + '</span>'
+        : '';
+
+      // Emphasis classes drive the colored left-edge stripe and signature fill
+      const emphasisTypes = ['chorus', 'bridge'];
+      const signatureTypes = ['tag', 'vamp', 'refrain', 'hook'];
+      let cardClass = 'section-card';
+      if (signatureTypes.indexOf(b.type) !== -1) cardClass += ' is-signature';
+      else if (emphasisTypes.indexOf(b.type) !== -1) cardClass += ' is-emphasis';
+
+      const header = b.full
+        ? '<div class="sc-head" data-type="' + b.type + '">' +
+            '<span class="sc-name">' + escapeHtml(b.full) + '</span>' +
+            repeatPill +
+            (b.note ? '<span class="sc-note">' + escapeHtml(b.note) + '</span>' : '') +
+          '</div>'
+        : '';
+      const body = renderBlockBody(b.body, currentKey);
+      return '<div class="' + cardClass + '" data-type="' + b.type + '">' + header + '<div class="sc-body">' + body + '</div></div>';
+    }).join('');
+
+    return nav + cards;
   }
 
   // ═══════════════════
@@ -2861,15 +4366,23 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
       // Reset if gap > 3 seconds
       if (now - tapTimes[tapTimes.length - 2] > 3000) {
         tapTimes = [now];
-        els.bpmDisplay.innerHTML = '';
         return;
       }
       let total = 0;
       for (let i = 1; i < tapTimes.length; i++) total += tapTimes[i] - tapTimes[i-1];
       const avg = total / (tapTimes.length - 1);
       bpm = Math.round(60000 / avg);
-      els.bpmDisplay.innerHTML = '<strong>' + bpm + '</strong> bpm';
+      els.bpmInput.value = bpm;
+      renderOutput();
     }
+  });
+
+  // Manual BPM input — also persists with the song
+  els.bpmInput.addEventListener('input', () => {
+    const v = parseInt(els.bpmInput.value, 10);
+    bpm = (isNaN(v) || v < 1) ? 0 : v;
+    renderOutput();
+    if (typeof scheduleAutoSave === 'function') scheduleAutoSave();
   });
 
   // ═══════════════════
@@ -2912,6 +4425,7 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
   els.lyricsInput.addEventListener('input', renderOutput);
   els.originalKey.addEventListener('change', renderOutput);
   els.songTitle.addEventListener('input', renderOutput);
+  els.songArtist.addEventListener('input', renderOutput);
   els.transposeUp.addEventListener('click', () => { transposeSteps++; renderOutput(); });
   els.transposeDown.addEventListener('click', () => { transposeSteps--; renderOutput(); });
   els.resetTranspose.addEventListener('click', () => { transposeSteps = 0; renderOutput(); });
@@ -2959,20 +4473,22 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
     if (typeof triggerShareMoment === 'function') triggerShareMoment();
   });
 
-  // Find Chords
-  function openFindChords() {
+  // Open a web search the user can use to FIND a source they're permitted to
+  // use.  Prep does not supply or scrape lyrics/chords itself — it just opens
+  // a search; the user chooses a source, copies the chart, and pastes it back.
+  function openWebSearch() {
     const title = els.songTitle.value.trim();
     if (!title) {
       showToast('Add a song title first — or load a YouTube link');
       return;
     }
-    const query = encodeURIComponent(title + ' chords');
-    window.open('https://www.google.com/search?q=' + query, '_blank');
+    const query = encodeURIComponent(title + ' lyrics chords');
+    window.open('https://www.google.com/search?q=' + query, '_blank', 'noopener');
   }
-  $('findChordsBtn').addEventListener('click', openFindChords);
+  $('findChordsBtn').addEventListener('click', openWebSearch);
   // Contextual hint under the video uses the same handler
   const ytFindChordsBtnEl = document.getElementById('ytFindChordsBtn');
-  if (ytFindChordsBtnEl) ytFindChordsBtnEl.addEventListener('click', openFindChords);
+  if (ytFindChordsBtnEl) ytFindChordsBtnEl.addEventListener('click', openWebSearch);
 
   // ═══════════════════
   //  SHAREABLE LINKS
@@ -3034,7 +4550,7 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
     const lines = transposed.split('\n');
     els.fsContent.innerHTML = lines.map(line => {
       const escaped = escapeHtml(line);
-      if (/^\[.*\]$/.test(line.trim())) return '<span class="section">' + escaped + '</span>';
+      if (isSectionHeader(line)) return '<span class="section">' + escaped + '</span>';
       if (isChordLine(line)) {
         if (nashvilleMode) return '<span class="chord">' + escapeHtml(nashvilleLine(line, currentKey)) + '</span>';
         const wrapped = escaped.replace(TOKEN_RE, (m) => {
@@ -3417,6 +4933,17 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
     else if (hasVideo) updateStep(2);
     else updateStep(1);
 
+    // Auto-collapse onboarding scaffolds once the user is set up — reclaims
+    // workspace so the chart can dominate visually
+    const stepBar = document.getElementById('stepBar');
+    if (stepBar) {
+      stepBar.classList.toggle('done', hasVideo && hasLyrics);
+    }
+    const pasteHelperBar = document.getElementById('pasteHelperBar');
+    if (pasteHelperBar) {
+      pasteHelperBar.classList.toggle('done', hasLyrics);
+    }
+
     // Show the "Song ready ✓" badge when BOTH a video and lyrics are present
     const readyBadge = document.getElementById('songReadyBadge');
     if (readyBadge) {
@@ -3619,15 +5146,17 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
   function currentSongData() {
     return {
       title: els.songTitle.value,
+      artist: els.songArtist.value,
       key: els.originalKey.value,
       lyrics: els.lyricsInput.value,
       transposeSteps: transposeSteps,
       youtubeUrl: els.youtubeUrl.value,
+      bpm: bpm || 0,
     };
   }
 
   function isSongEmpty(s) {
-    return !s.title && !s.lyrics.trim() && !s.youtubeUrl;
+    return !s.title && !s.artist && !s.lyrics.trim() && !s.youtubeUrl && !s.bpm;
   }
 
   function autoSaveCurrent() {
@@ -3658,10 +5187,14 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
     if (!s) return;
     suppressAutoSave = true;
     els.songTitle.value = s.title || '';
+    els.songArtist.value = s.artist || '';
     els.originalKey.value = s.key || '';
     els.lyricsInput.value = s.lyrics || '';
     transposeSteps = s.transposeSteps || 0;
     els.youtubeUrl.value = s.youtubeUrl || '';
+    // Restore tempo (the bug: this was missing — BPM wasn't being loaded)
+    bpm = s.bpm || 0;
+    els.bpmInput.value = bpm > 0 ? bpm : '';
     library.currentId = id;
     persistLibrary();
     originalText = els.lyricsInput.value;
@@ -3684,10 +5217,13 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
     suppressAutoSave = true;
     library.currentId = null;
     els.songTitle.value = '';
+    els.songArtist.value = '';
     els.originalKey.value = '';
     els.lyricsInput.value = '';
     transposeSteps = 0;
     els.youtubeUrl.value = '';
+    bpm = 0;
+    els.bpmInput.value = '';
     originalText = '';
     // Reset video
     currentVideoId = null;
@@ -3695,7 +5231,7 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
       els.videoContainer.innerHTML =
         '<div class="yt-placeholder" id="videoPlaceholder">' +
           '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>' +
-          '<div>Paste a YouTube link to start</div>' +
+          '<div>Paste a YouTube link to practice along</div>' +
         '</div>';
     }
     persistLibrary();
@@ -3792,6 +5328,7 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
 
   // Trigger auto-save on every meaningful change
   els.songTitle.addEventListener('input', scheduleAutoSave);
+  els.songArtist.addEventListener('input', scheduleAutoSave);
   els.originalKey.addEventListener('change', scheduleAutoSave);
   els.youtubeUrl.addEventListener('change', scheduleAutoSave);
   // Save when transpose changes too
@@ -3804,17 +5341,43 @@ Tip: load a YouTube reference, then paste lyrics or find chords to get started."
   // Save right before the user leaves
   window.addEventListener('beforeunload', autoSaveCurrent);
 
+  // ═══════════════════
+  //  CHART FONT SIZE  (Compact / Comfortable / Large)
+  // ═══════════════════
+  // Maps to a CSS custom property --print-scale used by every print rule
+  // and by the on-screen Preview body sizing. Persisted to localStorage.
+  const SIZE_SCALE = { compact: 0.92, comfortable: 1.0, large: 1.15 };
+  const SIZE_STORAGE_KEY = 'songprep-chart-size-v1';
+
+  function applyChartSize(size) {
+    if (!SIZE_SCALE[size]) size = 'comfortable';
+    document.documentElement.style.setProperty('--print-scale', SIZE_SCALE[size]);
+    document.documentElement.dataset.chartSize = size;
+    document.querySelectorAll('.size-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.size === size);
+    });
+    try { localStorage.setItem(SIZE_STORAGE_KEY, size); } catch (e) {}
+  }
+
+  document.querySelectorAll('.size-btn').forEach(btn => {
+    btn.addEventListener('click', () => applyChartSize(btn.dataset.size));
+  });
+
+  // Restore preference (or default to Comfortable)
+  let savedSize = 'comfortable';
+  try { savedSize = localStorage.getItem(SIZE_STORAGE_KEY) || 'comfortable'; } catch (e) {}
+  applyChartSize(savedSize);
+
   // ─── Init ───
   loadLibrary();
+  // Always start with a fresh blank song. Saved songs remain in the library
+  // and are accessible via the Songs menu — but visiting the tool never
+  // auto-resumes the last edit.
+  library.currentId = null;
   renderOutput();
   setMode('transpose');
   loadFromHash();
   recomputeStep();
-
-  // If we have a saved current song and the URL didn't load one, restore it
-  if (library.currentId && library.songs[library.currentId] && !els.lyricsInput.value && !els.songTitle.value) {
-    loadSong(library.currentId);
-  }
 
   // Auto-focus the YouTube URL input on first load (gives a clear starting point)
   setTimeout(() => {
